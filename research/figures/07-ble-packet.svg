@@ -1,0 +1,298 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1000 1250" width="1000" height="1250" font-family="sans-serif">
+<rect x="0" y="0" width="1000" height="1250" fill="#FAFBFB" stroke="none" stroke-width="0" rx="0"/>
+<text x="30" y="38" font-size="19" text-anchor="start" font-weight="bold" fill="#1E2328">121GW Bluetooth packet (firmware 1.10-2.05): 19 bytes, about 2 per second</text>
+<text x="30" y="60" font-size="13" text-anchor="start" font-weight="normal" fill="#4A5258">USART2 19200 8N1 to the BLE112; built by BLE_BuildPacket (0x0800C5DA). Multi-byte fields are big-endian.</text>
+<rect x="30" y="82" width="49" height="56" fill="#D9E8F5" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="54.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">0</text>
+<text x="54.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">F2</text>
+<text x="54.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">start</text>
+<rect x="79" y="82" width="49" height="56" fill="#D9E8F5" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="103.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">1</text>
+<text x="103.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">YY</text>
+<text x="103.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">date</text>
+<rect x="128" y="82" width="49" height="56" fill="#D9E8F5" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="152.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">2</text>
+<text x="152.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">MM|i4</text>
+<text x="152.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">date/ID</text>
+<rect x="177" y="82" width="49" height="56" fill="#D9E8F5" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="201.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">3</text>
+<text x="201.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">i3 i2</text>
+<text x="201.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">meter ID</text>
+<rect x="226" y="82" width="49" height="56" fill="#D9E8F5" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="250.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">4</text>
+<text x="250.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">i1 i0</text>
+<text x="250.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">meter ID</text>
+<rect x="275" y="82" width="49" height="56" fill="#FBE3C8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="299.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">5</text>
+<text x="299.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">mode</text>
+<text x="299.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">main</text>
+<rect x="324" y="82" width="49" height="56" fill="#FBE3C8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="348.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">6</text>
+<text x="348.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">range</text>
+<text x="348.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">main</text>
+<rect x="373" y="82" width="49" height="56" fill="#FBE3C8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="397.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">7</text>
+<text x="397.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">val hi</text>
+<text x="397.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">main</text>
+<rect x="422" y="82" width="49" height="56" fill="#FBE3C8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="446.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">8</text>
+<text x="446.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">val lo</text>
+<text x="446.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">main</text>
+<rect x="471" y="82" width="49" height="56" fill="#DCEFD9" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="495.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">9</text>
+<text x="495.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">code</text>
+<text x="495.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">sub</text>
+<rect x="520" y="82" width="49" height="56" fill="#DCEFD9" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="544.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">10</text>
+<text x="544.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">flags</text>
+<text x="544.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">sub</text>
+<rect x="569" y="82" width="49" height="56" fill="#DCEFD9" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="593.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">11</text>
+<text x="593.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">val hi</text>
+<text x="593.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">sub</text>
+<rect x="618" y="82" width="49" height="56" fill="#DCEFD9" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="642.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">12</text>
+<text x="642.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">val lo</text>
+<text x="642.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">sub</text>
+<rect x="667" y="82" width="49" height="56" fill="#ECE0F3" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="691.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">13</text>
+<text x="691.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">bar ctl</text>
+<text x="691.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">bar</text>
+<rect x="716" y="82" width="49" height="56" fill="#ECE0F3" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="740.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">14</text>
+<text x="740.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">bar n</text>
+<text x="740.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">bar</text>
+<rect x="765" y="82" width="49" height="56" fill="#ECE0F3" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="789.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">15</text>
+<text x="789.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">icons A</text>
+<text x="789.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">status</text>
+<rect x="814" y="82" width="49" height="56" fill="#ECE0F3" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="838.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">16</text>
+<text x="838.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">icons B</text>
+<text x="838.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">status</text>
+<rect x="863" y="82" width="49" height="56" fill="#ECE0F3" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="887.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">17</text>
+<text x="887.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">icons C</text>
+<text x="887.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">status</text>
+<rect x="912" y="82" width="49" height="56" fill="#F3D9D8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="936.5" y="99" font-size="12" text-anchor="middle" font-weight="bold" fill="#1E2328">18</text>
+<text x="936.5" y="117" font-size="11" text-anchor="middle" font-weight="normal" fill="#1E2328">XOR</text>
+<text x="936.5" y="132" font-size="9.5" text-anchor="middle" font-weight="normal" fill="#4A5258">check</text>
+<rect x="30" y="150" width="14" height="14" fill="#D9E8F5" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="50" y="162" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">header (date stamp + meter ID, packed BCD)</text>
+<rect x="340.8" y="150" width="14" height="14" fill="#FBE3C8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="360.8" y="162" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">main reading</text>
+<rect x="459.6" y="150" width="14" height="14" fill="#DCEFD9" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="479.6" y="162" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">sub display</text>
+<rect x="572.0" y="150" width="14" height="14" fill="#ECE0F3" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="592.0" y="162" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">bargraph and annunciators</text>
+<rect x="774.0" y="150" width="14" height="14" fill="#F3D9D8" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="794.0" y="162" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">check</text>
+<rect x="30" y="186" width="940" height="26" fill="#E6ECEE" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="42" y="204" font-size="13" text-anchor="start" font-weight="bold" fill="#1E2328">Byte</text>
+<text x="112" y="204" font-size="13" text-anchor="start" font-weight="bold" fill="#1E2328">Bits</text>
+<text x="200" y="204" font-size="13" text-anchor="start" font-weight="bold" fill="#1E2328">Meaning</text>
+<rect x="30" y="212" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="212" width="70" height="22" fill="#D9E8F5" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="228" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">0</text>
+<text x="112" y="228" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="228" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">0xF2, start of packet</text>
+<rect x="30" y="234" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="234" width="70" height="22" fill="#D9E8F5" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="250" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">1</text>
+<text x="112" y="250" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">7-0</text>
+<text x="200" y="250" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">date stamp year, 2 BCD digits (EEPROM 0x01, YY*100+MM; set in factory mode)</text>
+<rect x="30" y="256" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="256" width="70" height="22" fill="#D9E8F5" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="272" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">2</text>
+<text x="112" y="272" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">7-4</text>
+<text x="200" y="272" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">date stamp month, binary 1-12</text>
+<rect x="30" y="278" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="278" width="70" height="22" fill="#D9E8F5" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="294" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">2</text>
+<text x="112" y="294" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">3-0</text>
+<text x="200" y="294" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">meter ID digit 5 (ten-thousands); meter ID = EEPROM 0x03, SETUP page 8</text>
+<rect x="30" y="300" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="300" width="70" height="22" fill="#D9E8F5" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="316" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">3-4</text>
+<text x="112" y="316" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="316" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">meter ID digits 4-1, packed BCD</text>
+<rect x="30" y="322" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="322" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="338" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">5</text>
+<text x="112" y="338" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">4-0</text>
+<text x="200" y="338" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">main mode 0-24 (g_mode: 0 LowZ, 1 DCV, 2 ACV, 3 DCmV, 4 ACmV, 5 temp, ... 24 DC VA)</text>
+<rect x="30" y="344" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="344" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="360" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">5</text>
+<text x="112" y="360" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">7-6</text>
+<text x="200" y="360" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">main value |v| bits 17-16</text>
+<rect x="30" y="366" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="366" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="382" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">6</text>
+<text x="112" y="382" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">7</text>
+<text x="200" y="382" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">overload (OFL)</text>
+<rect x="30" y="388" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="388" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="404" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">6</text>
+<text x="112" y="404" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">6</text>
+<text x="200" y="404" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">main value negative</text>
+<rect x="30" y="410" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="410" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="426" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">6</text>
+<text x="112" y="426" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">5 / 4</text>
+<text x="200" y="426" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">temperature mode only: 5 = deg C, 4 = deg F</text>
+<rect x="30" y="432" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="432" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="448" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">6</text>
+<text x="112" y="448" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">3-0</text>
+<text x="200" y="448" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">range index (diode: 1 when the 15 V test is on)</text>
+<rect x="30" y="454" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="454" width="70" height="22" fill="#FBE3C8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="470" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">7-8</text>
+<text x="112" y="470" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="470" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">main value |v| bits 15-0 (18-bit magnitude, sign in byte 6)</text>
+<rect x="30" y="476" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="476" width="70" height="22" fill="#DCEFD9" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="492" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">9</text>
+<text x="112" y="492" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="492" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">sub code: SETUP page shown, e.g. 100 deg C, 105 deg F, 110 battery, 120/125 APO on/off,</text>
+<rect x="30" y="498" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="498" width="70" height="22" fill="#DCEFD9" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="514" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328"></text>
+<text x="112" y="514" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="514" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">130 year, 135 date, 140 time, 160 contrast, 180 dBm, 150 burden; 6 frequency; 0 = blank</text>
+<rect x="30" y="520" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="520" width="70" height="22" fill="#DCEFD9" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="536" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">10</text>
+<text x="112" y="536" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">7 / 6</text>
+<text x="200" y="536" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">sub overload / sub negative</text>
+<rect x="30" y="542" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="542" width="70" height="22" fill="#DCEFD9" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="558" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">10</text>
+<text x="112" y="558" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">5-0</text>
+<text x="200" y="558" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">sub flags: decimal places, k / Hz unit bits (per field)</text>
+<rect x="30" y="564" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="564" width="70" height="22" fill="#DCEFD9" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="580" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">11-12</text>
+<text x="112" y="580" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="580" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">sub value, magnitude (date and time pages: one byte each)</text>
+<rect x="30" y="586" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="586" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="602" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">13</text>
+<text x="112" y="602" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">4</text>
+<text x="200" y="602" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">bargraph off (Hz, pulse, duty, capacitance, temperature)</text>
+<rect x="30" y="608" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="608" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="624" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">13</text>
+<text x="112" y="624" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">3</text>
+<text x="200" y="624" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">set with bar scale code 3</text>
+<rect x="30" y="630" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="630" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="646" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">13</text>
+<text x="112" y="646" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">2</text>
+<text x="200" y="646" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">per-sample reading negative (bar on the minus side)</text>
+<rect x="30" y="652" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="652" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="668" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">13</text>
+<text x="112" y="668" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">1-0</text>
+<text x="200" y="668" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">bar scale code 0-3 (range label state)</text>
+<rect x="30" y="674" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="674" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="690" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">14</text>
+<text x="112" y="690" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">4-0</text>
+<text x="200" y="690" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">lit bargraph segments, 0-25</text>
+<rect x="30" y="696" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="696" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="712" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">15</text>
+<text x="112" y="712" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">6 / 5</text>
+<text x="200" y="712" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">1 kHz LPF on / 1 ms PEAK on</text>
+<rect x="30" y="718" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="718" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="734" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">15</text>
+<text x="112" y="734" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">4-3</text>
+<text x="200" y="734" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">coupling: 1 DC, 2 AC, 3 AC+DC (0 none)</text>
+<rect x="30" y="740" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="740" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="756" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">15</text>
+<text x="112" y="756" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">2 / 1 / 0</text>
+<text x="200" y="756" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">AUTO range / auto power-off enabled / low battery</text>
+<rect x="30" y="762" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="762" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="778" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">16</text>
+<text x="112" y="778" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">6 / 5</text>
+<text x="200" y="778" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">Bluetooth on / high-voltage warning icon (&gt;= 30 V)</text>
+<rect x="30" y="784" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="784" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="800" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">16</text>
+<text x="112" y="800" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">4 / 3</text>
+<text x="200" y="800" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">REL on / dBm page (ACV, SETUP page 11)</text>
+<rect x="30" y="806" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="806" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="822" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">16</text>
+<text x="112" y="822" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">2-0</text>
+<text x="200" y="822" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">MIN/MAX state 1 MAX, 2 MIN, 3 AVG, 4 all; in 1 ms PEAK 1 max, 2 min</text>
+<rect x="30" y="828" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="828" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="844" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">17</text>
+<text x="112" y="844" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">4</text>
+<text x="200" y="844" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">MEM: logging or recall view</text>
+<rect x="30" y="850" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="850" width="70" height="22" fill="#ECE0F3" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="866" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">17</text>
+<text x="112" y="866" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">3-2</text>
+<text x="200" y="866" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">hold: 0 off, 1 A-HOLD, 2 HOLD</text>
+<rect x="30" y="872" width="940" height="22" fill="#FFFFFF" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<rect x="30" y="872" width="70" height="22" fill="#F3D9D8" stroke="#D0D5D8" stroke-width="0.7" rx="0"/>
+<text x="42" y="888" font-size="12" text-anchor="start" font-weight="bold" fill="#1E2328">18</text>
+<text x="112" y="888" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328"></text>
+<text x="200" y="888" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">XOR of bytes 0-17</text>
+<text x="30" y="912" font-size="12" text-anchor="start" font-weight="normal" fill="#4A5258">Never set by 2.05's builder: byte 15 bit 7, byte 16 bit 7 (deg C / deg F icons), byte 17 bits 1-0 (AC / DC icons), byte 17 bit 6.</text>
+<text x="30" y="930" font-size="12" text-anchor="start" font-weight="normal" fill="#4A5258">Older firmware: 1.00-1.09 send F2 + 52 ASCII hex characters + CR LF instead; 1.57-2.00 send 19 zero bytes before the first packet.</text>
+<text x="30" y="964" font-size="15" text-anchor="start" font-weight="bold" fill="#1E2328">Frames the meter accepts: ASCII hex after the header byte (upper case only); valid frames are echoed</text>
+<text x="30" y="994" font-size="14" text-anchor="start" font-weight="bold" fill="#1E2328">Key press: 0xF4 + 4 characters (5 bytes)</text>
+<rect x="30" y="1004" width="90" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="75.0" y="1023" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">F4</text>
+<text x="75.0" y="1041" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">header byte</text>
+<rect x="120" y="1004" width="90" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="165.0" y="1023" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">'0'/'8'</text>
+<text x="165.0" y="1041" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">short / long</text>
+<rect x="210" y="1004" width="90" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="255.0" y="1023" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">'1'..'8'</text>
+<text x="255.0" y="1041" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">key</text>
+<rect x="300" y="1004" width="90" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="345.0" y="1023" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">'0'/'8'</text>
+<text x="345.0" y="1041" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">repeat</text>
+<rect x="390" y="1004" width="90" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="435.0" y="1023" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">'1'..'8'</text>
+<text x="435.0" y="1041" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">repeat</text>
+<text x="30" y="1072" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">Key byte = the hex pair, sent twice; both copies must match. 0x01-0x08 short, 0x81-0x88 long.</text>
+<text x="30" y="1089" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">1 RANGE, 2 HOLD, 3 REL, 4 1ms PEAK, 5 MODE, 6 MIN/MAX, 7 MEM, 8 SETUP.  Example: F4 '0' '5' '0' '5' = short MODE.</text>
+<text x="30" y="1134" font-size="14" text-anchor="start" font-weight="bold" fill="#1E2328">Set clock: 0xF8 + 14 characters (15 bytes)</text>
+<rect x="30" y="1144" width="90" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="75.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">F8</text>
+<text x="75.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">header byte</text>
+<rect x="120" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="161.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">YY</text>
+<text x="161.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">year-2000</text>
+<rect x="202" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="243.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">MM</text>
+<text x="243.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">month</text>
+<rect x="284" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="325.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">DD</text>
+<text x="325.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">day</text>
+<rect x="366" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="407.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">hh</text>
+<text x="407.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">hour</text>
+<rect x="448" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="489.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">mm</text>
+<text x="489.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">minute</text>
+<rect x="530" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="571.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">ss</text>
+<text x="571.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">second</text>
+<rect x="612" y="1144" width="82" height="46" fill="#FFF6D6" stroke="#5A6268" stroke-width="1" rx="0"/>
+<text x="653.0" y="1163" font-size="13" text-anchor="middle" font-weight="bold" fill="#1E2328">XOR</text>
+<text x="653.0" y="1181" font-size="10.5" text-anchor="middle" font-weight="normal" fill="#4A5258">of the six</text>
+<text x="30" y="1212" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">Each field is a binary byte written as two hex characters (2026 -&gt; "1A"). A frame with a bad XOR is ignored.</text>
+<text x="30" y="1229" font-size="12" text-anchor="start" font-weight="normal" fill="#1E2328">Written to the NJU6350 clock chip once per Bluetooth session (re-armed by the long 1ms PEAK that turns Bluetooth on).</text>
+</svg>

@@ -1,0 +1,59 @@
+Source: 121gw-qt
+Section: electronics
+Priority: optional
+Maintainer: Aaron Yourk <ayourk@gmail.com>
+Build-Depends:
+ debhelper-compat (= 13),
+ cmake (>= 3.22),
+ ninja-build,
+ qt6-base-dev (>= 6.4),
+ qt6-declarative-dev (>= 6.4),
+ qt6-connectivity-dev (>= 6.4),
+ qt6-svg-dev (>= 6.4)
+# Debian Policy 9.6 forbids shipping a .desktop file and a Debian menu file in
+# the same package from Standards-Version 3.9.6 onwards. This package ships
+# both: usr/share/applications/121gw-qt.desktop for XDG desktops, and
+# usr/share/menu/121gw-qt because fluxbox reads only the classic Debian menu
+# pipeline. Pinned below 3.9.6 so the declaration is truthful. Drop the pin
+# and the menu file together once fluxbox consumes desktop entries.
+Standards-Version: 3.9.5
+Homepage: https://github.com/ayourk/121GW-Qt
+Vcs-Git: https://github.com/ayourk/121GW-Qt.git
+Vcs-Browser: https://github.com/ayourk/121GW-Qt
+Rules-Requires-Root: no
+
+Package: 121gw-qt
+Architecture: any
+# shlibs brings the Qt libraries it links (Widgets, Quick, Bluetooth, Svg ...).
+# The QML modules are loaded at run time, so shlibs cannot see them, and
+# qml6-module-qtquick-controls does not pull in what it needs itself: the
+# list is every module the front panel imports, and what those import.
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+ qml6-module-qtqml,
+ qml6-module-qtqml-models,
+ qml6-module-qtqml-workerscript,
+ qml6-module-qtquick,
+ qml6-module-qtquick-controls,
+ qml6-module-qtquick-layouts,
+ qml6-module-qtquick-templates,
+ qml6-module-qtquick-window
+# The meter is reached through BlueZ over D-Bus; no group or capability is
+# needed, only the daemon. --demo works without it.
+Recommends:
+ bluez
+Description: front panel and MCP server for the EEVblog 121GW multimeter
+ 121gw-qt connects to an EEVblog 121GW multimeter over Bluetooth Low Energy
+ and shows its whole front panel live: the LCD, the rotary dial, the
+ buttons and the input jacks the probe leads belong in for the current
+ mode. Buttons pressed in the window are pressed on the meter, and
+ readings can be logged and saved as sessions.
+ .
+ With the meter's custom firmware it also manages the meter's SD card
+ over Bluetooth (YMODEM): listing, downloading and uploading files, and
+ uploading firmware images for the meter's bootloader.
+ .
+ A built-in MCP server, reachable from this computer only, lets an AI
+ assistant read the meter, press its buttons and suggest the dial position
+ and jacks for a measurement. A simulated meter (--demo) needs no hardware.

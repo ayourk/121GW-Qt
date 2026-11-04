@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="980" height="482" viewBox="0 0 980 482" font-family="sans-serif">
+<rect x="0" y="0" width="980" height="482" fill="#F4F6F8"/>
+<text x="12" y="30" font-size="20" font-weight="bold" fill="#1B2026">Dial position Hz</text>
+<text x="12" y="54" font-size="14" fill="#1B2026">MODE: frequency (Hz) &gt; pulse width (ms) &gt; duty cycle (%) &gt; Hz</text>
+<text x="12" y="76" font-size="12" fill="#56616B">Firmware 2.05. Short press acts on release; long press fires after about 0.5 s held. Gray italic = rejected (double beep or ignored).</text>
+<rect x="12" y="96" width="232" height="174" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="24" y="118" width="208" height="28" rx="14" fill="#4A5560" stroke="#2A2F33"/>
+<text x="128.0" y="137" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">RANGE</text>
+<text x="26" y="112" font-size="10" fill="#56616B">legend: 15V diode</text>
+<text x="22" y="166" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="22" y="181" font-size="12" fill="#1B2026">1st press: manual range, same</text>
+<text x="22" y="196" font-size="12" fill="#1B2026">  range (AUTO off)</text>
+<text x="22" y="211" font-size="12" fill="#1B2026">next presses: step to the next</text>
+<text x="22" y="226" font-size="12" fill="#1B2026">  range</text>
+<text x="22" y="245" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="22" y="260" font-size="12" fill="#1B2026">back to autorange</text>
+<rect x="254" y="96" width="232" height="174" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="266" y="118" width="208" height="28" rx="14" fill="#4A5560" stroke="#2A2F33"/>
+<text x="370.0" y="137" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">HOLD</text>
+<text x="268" y="112" font-size="10" fill="#56616B">legend: AutoHOLD</text>
+<text x="264" y="166" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="264" y="181" font-size="12" fill="#1B2026">1st: HOLD (range locked)</text>
+<text x="264" y="196" font-size="12" fill="#1B2026">2nd: off (no A-HOLD in Hz, ms,</text>
+<text x="264" y="211" font-size="12" fill="#1B2026">  %)</text>
+<text x="264" y="230" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="264" y="245" font-size="12" font-style="italic" fill="#7A848C">no long function: press ignored,</text>
+<text x="264" y="260" font-size="12" font-style="italic" fill="#7A848C">  no beep</text>
+<rect x="496" y="96" width="232" height="174" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="508" y="118" width="208" height="28" rx="14" fill="#4A5560" stroke="#2A2F33"/>
+<text x="612.0" y="137" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">REL</text>
+<text x="510" y="112" font-size="10" fill="#56616B">legend: UP</text>
+<text x="714" y="112" font-size="10" text-anchor="end" fill="#C0403A">1kHz</text>
+<text x="506" y="166" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="506" y="181" font-size="12" fill="#1B2026">REL on/off (range locked)</text>
+<text x="506" y="196" font-size="12" fill="#1B2026">SETUP edit: UP; recall: next</text>
+<text x="506" y="211" font-size="12" fill="#1B2026">  record</text>
+<text x="506" y="230" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="506" y="245" font-size="12" font-style="italic" fill="#7A848C">double beep</text>
+<rect x="738" y="96" width="232" height="174" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="750" y="118" width="208" height="28" rx="14" fill="#4A5560" stroke="#2A2F33"/>
+<text x="854.0" y="137" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">1ms PEAK</text>
+<text x="752" y="112" font-size="10" fill="#56616B">legend: DOWN</text>
+<text x="956" y="112" font-size="10" text-anchor="end" fill="#C0403A">Bluetooth</text>
+<text x="748" y="166" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="748" y="181" font-size="12" font-style="italic" fill="#7A848C">double beep (1 ms PEAK is</text>
+<text x="748" y="196" font-size="12" font-style="italic" fill="#7A848C">  ACV/ACmV only)</text>
+<text x="748" y="211" font-size="12" fill="#1B2026">SETUP edit: DOWN; recall:</text>
+<text x="748" y="226" font-size="12" fill="#1B2026">  previous</text>
+<text x="748" y="245" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="748" y="260" font-size="12" fill="#1B2026">Bluetooth on/off</text>
+<rect x="12" y="280" width="232" height="158" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="24" y="302" width="208" height="28" rx="14" fill="#D63D36" stroke="#2A2F33"/>
+<text x="128.0" y="321" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">MODE</text>
+<text x="230" y="296" font-size="10" text-anchor="end" fill="#C0403A">backlight</text>
+<text x="22" y="350" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="22" y="365" font-size="12" fill="#1B2026">next function</text>
+<text x="22" y="384" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="22" y="399" font-size="12" fill="#1B2026">backlight on/off</text>
+<rect x="254" y="280" width="232" height="158" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="266" y="302" width="208" height="28" rx="14" fill="#4A5560" stroke="#2A2F33"/>
+<text x="370.0" y="321" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">MIN/MAX</text>
+<text x="264" y="350" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="264" y="365" font-size="12" fill="#1B2026">MIN/MAX on (range locked), then</text>
+<text x="264" y="380" font-size="12" fill="#1B2026">MAX &gt; MIN &gt; AVG &gt; all three &gt;</text>
+<text x="264" y="395" font-size="12" fill="#1B2026">  MAX</text>
+<text x="264" y="414" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="264" y="429" font-size="12" fill="#1B2026">MIN/MAX off (double beep if off)</text>
+<rect x="496" y="280" width="232" height="158" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="508" y="302" width="208" height="28" rx="14" fill="#4A5560" stroke="#2A2F33"/>
+<text x="612.0" y="321" font-size="14" font-weight="bold" text-anchor="middle" fill="#F0F4F6">MEM</text>
+<text x="506" y="350" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="506" y="365" font-size="12" fill="#1B2026">recall logged records (MEM again</text>
+<text x="506" y="380" font-size="12" fill="#1B2026">  exits)</text>
+<text x="506" y="395" font-size="12" font-style="italic" fill="#7A848C">double beep if nothing logged</text>
+<text x="506" y="414" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="506" y="429" font-size="12" fill="#1B2026">start / stop logging to SD</text>
+<rect x="738" y="280" width="232" height="158" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<rect x="750" y="302" width="208" height="28" rx="14" fill="#E2BF55" stroke="#2A2F33"/>
+<text x="854.0" y="321" font-size="14" font-weight="bold" text-anchor="middle" fill="#221B1B">SETUP</text>
+<text x="748" y="350" font-size="11" font-weight="bold" fill="#0F78B4">SHORT</text>
+<text x="748" y="365" font-size="12" fill="#1B2026">pages 0-9</text>
+<text x="748" y="384" font-size="11" font-weight="bold" fill="#0F78B4">LONG</text>
+<text x="748" y="399" font-size="12" fill="#1B2026">edit / save (battery: double</text>
+<text x="748" y="414" font-size="12" fill="#1B2026">  beep)</text>
+<text x="12" y="470" font-size="11" fill="#56616B">While logging or in the recall view most keys give a double beep; see README. Emulated (stock 2.05) and read from the decompile.</text>
+</svg>

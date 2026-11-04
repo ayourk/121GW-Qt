@@ -1,0 +1,6 @@
+# site	expected stock callee (bl)	new function	why
+08006158	HY_Read	hy_status_read	OF-53/54: HY_Service reads INTF first, then config, then data (counter data after the flag)
+0800616c	HY_Write	hy_intf_clear	OF-53: INTF clear writes 0 only for the flags that were read (was: 0 to all)
+08006a94	ACFreq_Correct	acmv_fast_correct	OF-44: ACmV per-sample value gets the 1 kHz filter compensation, as in ACV
+08017b66	LCD_SubDbm	sub_dbm	OF-46: dBm of a zero reading (-infinity) shown as "- OFL" instead of "- 7295"
+0801351a	Battery_TableToCentivolts	battery_centivolts	OF-52: battery voltage from the R69/R70 divider and 3.3 V reference instead of the table

@@ -1,0 +1,11 @@
+/build/
+*.user
+
+# dpkg-buildpackage output
+/obj-*/
+/debian/.debhelper/
+/debian/121gw-qt/
+/debian/tmp/
+/debian/files
+/debian/*.substvars
+/debian/debhelper-build-stamp

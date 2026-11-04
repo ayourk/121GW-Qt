@@ -1,0 +1,81 @@
+# .github/workflows/frontend-arch.yml
+#
+# Build the 121gw-qt package for Arch Linux (x86_64; Arch publishes no
+# official aarch64 image) with frontend/packaging/arch/PKGBUILD, whose
+# depends and makedepends are the job's list of dependencies. makepkg
+# runs the test suites (check()).
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend Arch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-arch.yml'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+jobs:
+
+  arch:
+    name: 121gw-qt Arch (x86_64)
+    runs-on: ubuntu-24.04
+    container: archlinux:latest
+
+    steps:
+      - name: Prepare the container
+        working-directory: /
+        run: |
+          # pacman's Landlock sandbox is unavailable in the runner's containers.
+          echo 'DisableSandbox' >> /etc/pacman.conf
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm git base-devel
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install dependencies
+        run: |
+          # shellcheck disable=SC1091
+          . packaging/arch/PKGBUILD
+          pacman -S --noconfirm --needed "${depends[@]}" "${makedepends[@]}"
+
+      - name: Build the package
+        run: |
+          version=$(cmake -DFIELD=full -P cmake/GW121Version.cmake)
+          [ -n "$version" ] || { echo "::error::cmake/GW121Version.cmake gave no version"; exit 1; }
+          mkdir -p pkgbuild
+          cp packaging/arch/PKGBUILD pkgbuild/PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=${version}/" pkgbuild/PKGBUILD
+          # makepkg refuses to run as root.
+          useradd -m builder
+          chown -R builder:builder .
+          (cd pkgbuild && su builder -c "makepkg -f --noconfirm")
+          cp pkgbuild/*.pkg.tar.zst .
+          ls -la ./*.pkg.tar.zst
+
+      - name: Install the package and start it
+        run: |
+          pacman -U --noconfirm ./121gw-qt-[0-9]*.pkg.tar.zst
+          scripts/ci/smoke.sh 121gw-qt
+
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-arch-x86_64-pkg
+          path: frontend/*.pkg.tar.zst
+          retention-days: 30
+          if-no-files-found: error

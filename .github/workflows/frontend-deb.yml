@@ -1,0 +1,156 @@
+# .github/workflows/frontend-deb.yml
+#
+# Build the 121gw-qt .deb with frontend/debian/ (dpkg-buildpackage, which
+# runs the test suites), check it with lintian, then install it with apt
+# and start it: apt resolves the package's own Depends, so a QML module
+# missing from them fails here rather than on a user's machine.
+#
+#   Ubuntu 24.04 (noble)    amd64, arm64 (native runners)
+#   Debian 12 (bookworm)    amd64, arm64 (containers)
+#
+# Also called by nightly.yml (a nightly version, fewer legs) and
+# release.yml.
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend DEB
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-deb.yml'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      nightly:
+        description: Nightly stamp YYYY.MM.DD[.N] (frontend/cmake/GW121Version.cmake); empty for a release build
+        type: string
+        default: ''
+      legs:
+        description: Space-separated legs to build (distro-arch, e.g. "ubuntu2404-amd64"); empty builds them all
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+env:
+  # Read by CMake (cmake/GW121Version.cmake) inside dpkg-buildpackage.
+  GW121_NIGHTLY: ${{ inputs.nightly }}
+
+jobs:
+
+  deb:
+    name: 121gw-qt DEB (${{ matrix.distro }}, ${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.container }}
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      # A caller naming its legs skips the rest. GitHub fixes a job's matrix
+      # before an expression could filter it, so a leg left out still
+      # starts, then skips every step.
+      GW_LEG_SKIP: ${{ inputs.legs && !contains(format(' {0} ', inputs.legs), format(' {0}-{1} ', matrix.distro, matrix.arch)) }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: ubuntu2404
+            arch: amd64
+            runner: ubuntu-24.04
+            container: ""
+          - distro: ubuntu2404
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            container: ""
+          - distro: debian12
+            arch: amd64
+            runner: ubuntu-24.04
+            container: debian:12
+          - distro: debian12
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            container: debian:12
+
+    steps:
+      - name: Leg not requested
+        if: env.GW_LEG_SKIP == 'true'
+        working-directory: /
+        run: echo "This run builds only ${{ inputs.legs }}; ${{ matrix.distro }}-${{ matrix.arch }} is skipped."
+
+      - name: Prepare the container
+        if: matrix.container != '' && env.GW_LEG_SKIP != 'true'
+        working-directory: /
+        run: |
+          apt-get update
+          apt-get install -y git sudo ca-certificates tzdata
+
+      - name: Checkout
+        if: env.GW_LEG_SKIP != 'true'
+        uses: actions/checkout@v7
+
+      # Build-Depends only: the QML modules must come from the package's
+      # Depends in the install step below, or that step proves nothing.
+      - name: Install build dependencies
+        if: env.GW_LEG_SKIP != 'true'
+        run: scripts/ci/apt-deps.sh --extra lintian
+
+      # A nightly's package version is the base plus the stamp,
+      # 0.1.0.2026.11.03-1: above every earlier nightly, below the next
+      # release.
+      - name: Nightly package version
+        if: env.GW121_NIGHTLY != '' && env.GW_LEG_SKIP != 'true'
+        run: |
+          full=$(cmake -DFIELD=full -P cmake/GW121Version.cmake)
+          sed -i "1s/^121gw-qt ([^)]*)/121gw-qt (${full}-1)/" debian/changelog
+          head -1 debian/changelog
+          head -1 debian/changelog | grep -qF "(${full}-1)"
+
+      - name: Build the package
+        if: env.GW_LEG_SKIP != 'true'
+        run: |
+          dpkg-buildpackage -us -uc -b
+          mkdir -p artifacts
+          mv ../*.deb artifacts/
+          ls -la artifacts
+
+      # Errors fail the job, and so does any warning except the one this
+      # package carries on purpose: it ships a .desktop file and a Debian
+      # menu file together (see the Standards-Version comment in
+      # debian/control). The .deb is checked, not the .changes, whose
+      # distribution (noble) a Debian lintian would reject.
+      - name: lintian
+        if: env.GW_LEG_SKIP != 'true'
+        run: |
+          lintian --version
+          lintian -I --pedantic artifacts/121gw-qt_*.deb | tee lintian.txt || true
+          bad=$(grep -E '^[EW]: ' lintian.txt | grep -v ' command-in-menu-file-and-desktop-file ' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::lintian reported errors or unexpected warnings:"
+            echo "$bad"
+            exit 1
+          fi
+
+      - name: Install the package and start it
+        if: env.GW_LEG_SKIP != 'true'
+        run: |
+          sudo -E apt-get install -y ./artifacts/121gw-qt_*.deb
+          dpkg -s 121gw-qt | grep -E '^(Version|Depends):'
+          scripts/ci/smoke.sh 121gw-qt
+
+      - name: Upload DEB
+        if: env.GW_LEG_SKIP != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-${{ matrix.distro }}-${{ matrix.arch }}-deb
+          path: frontend/artifacts/*.deb
+          retention-days: 30
+          if-no-files-found: error

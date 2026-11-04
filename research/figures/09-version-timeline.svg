@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="1017" viewBox="0 0 1000 1017" font-family="sans-serif">
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#56616B"/></marker></defs>
+<rect x="0" y="0" width="1000" height="1017" fill="#F4F6F8"/>
+<text x="16" y="32" font-size="20" font-weight="bold" fill="#1B2026">121GW firmware 1.00 to 2.05: what changed</text>
+<text x="16" y="54" font-size="13" fill="#56616B" text-anchor="start">Feature changes found by running all 21 published images in the emulator with the same inputs, plus the official changelog.</text>
+<text x="16" y="74" font-size="12" fill="#56616B" text-anchor="start">+ added    - removed    ~ changed.  Dates are build dates of the published files (2.05: release date).</text>
+<line x1="130" y1="100" x2="130" y2="110" stroke="#0F78B4" stroke-width="3"/>
+<line x1="130" y1="100" x2="130" y2="160" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="114" r="7" fill="#0F78B4"/>
+<text x="114" y="119" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.00</text>
+<text x="114" y="135" font-size="11" fill="#56616B" text-anchor="end">2018-03</text>
+<text x="150" y="119" font-size="13" fill="#2E7D32" text-anchor="start">+ SD calibration save/load (CAL.BIN); version on the boot screen</text>
+<text x="150" y="138" font-size="13" fill="#1B2026" text-anchor="start">~ Bluetooth: F2 + 52 hex characters, about 4 packets/s</text>
+<line x1="130" y1="162" x2="130" y2="222" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="176" r="7" fill="#0F78B4"/>
+<text x="114" y="181" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.02</text>
+<text x="114" y="197" font-size="11" fill="#56616B" text-anchor="end">2017-12</text>
+<text x="150" y="181" font-size="13" fill="#2E7D32" text-anchor="start">+ boot RANGE: all-segment test</text>
+<text x="150" y="200" font-size="13" fill="#1B2026" text-anchor="start">~ calibration-mode DC gain capture result changes after 1.00</text>
+<line x1="130" y1="224" x2="130" y2="284" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="238" r="7" fill="#0F78B4"/>
+<text x="114" y="243" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.04</text>
+<text x="114" y="259" font-size="11" fill="#56616B" text-anchor="end">2018-03</text>
+<text x="150" y="243" font-size="13" fill="#2E7D32" text-anchor="start">+ buzzer setting b-On / b-OFF (b-OFF also silenced continuity until 1.09)</text>
+<text x="150" y="262" font-size="13" fill="#C0403A" text-anchor="start">- REL and MIN/MAX in LowZ</text>
+<line x1="130" y1="286" x2="130" y2="346" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="300" r="7" fill="#0F78B4"/>
+<text x="114" y="305" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.10</text>
+<text x="114" y="321" font-size="11" fill="#56616B" text-anchor="end">2018-03</text>
+<text x="150" y="305" font-size="13" fill="#1B2026" text-anchor="start">~ Bluetooth: 19-byte binary packet; Ohm starts on range 0 (to 1.22)</text>
+<text x="150" y="324" font-size="13" fill="#1B2026" text-anchor="start">~ continuity beeps even with the buzzer off; VA shows &quot;-----&quot; before a reading</text>
+<line x1="130" y1="348" x2="130" y2="389" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="362" r="7" fill="#0F78B4"/>
+<text x="114" y="367" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.15</text>
+<text x="114" y="383" font-size="11" fill="#56616B" text-anchor="end">2018-04</text>
+<text x="150" y="367" font-size="13" fill="#1B2026" text-anchor="start">~ packet rate halved (about 2/s); &quot;SdE03&quot; on an unusable card; OFL shown in more places</text>
+<line x1="130" y1="391" x2="130" y2="451" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="405" r="7" fill="#0F78B4"/>
+<text x="114" y="410" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.21</text>
+<text x="114" y="426" font-size="11" fill="#56616B" text-anchor="end">2018-06</text>
+<text x="150" y="410" font-size="13" fill="#1B2026" text-anchor="start">~ HOLD and MIN/MAX lock the range</text>
+<text x="150" y="429" font-size="13" fill="#2E7D32" text-anchor="start">+ 1 kHz LPF frequency compensation; C/F in the packet</text>
+<line x1="130" y1="453" x2="130" y2="494" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="467" r="7" fill="#0F78B4"/>
+<text x="114" y="472" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.22</text>
+<text x="114" y="488" font-size="11" fill="#56616B" text-anchor="end">2018-06</text>
+<text x="150" y="472" font-size="13" fill="#2E7D32" text-anchor="start">+ two more bits for main values over 65535</text>
+<line x1="130" y1="496" x2="130" y2="537" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="510" r="7" fill="#0F78B4"/>
+<text x="114" y="515" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.25</text>
+<text x="114" y="531" font-size="11" fill="#56616B" text-anchor="end">2018-08</text>
+<text x="150" y="515" font-size="13" fill="#1B2026" text-anchor="start">~ Ohm starts on range 6 again</text>
+<line x1="130" y1="539" x2="130" y2="580" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="553" r="7" fill="#0F78B4"/>
+<text x="114" y="558" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.26</text>
+<text x="114" y="574" font-size="11" fill="#56616B" text-anchor="end">2018-08</text>
+<text x="150" y="558" font-size="13" fill="#1B2026" text-anchor="start">~ rebuilt with different compiler settings; logs the displayed data</text>
+<line x1="130" y1="582" x2="130" y2="623" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="596" r="7" fill="#0F78B4"/>
+<text x="114" y="601" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.51</text>
+<text x="114" y="617" font-size="11" fill="#56616B" text-anchor="end">2018-09</text>
+<text x="150" y="601" font-size="13" fill="#1B2026" text-anchor="start">~ 200 ms fastest log interval; log file times from the clock chip</text>
+<line x1="130" y1="625" x2="130" y2="666" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="639" r="7" fill="#0F78B4"/>
+<text x="114" y="644" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.52</text>
+<text x="114" y="660" font-size="11" fill="#56616B" text-anchor="end">2018-10</text>
+<text x="150" y="644" font-size="13" fill="#1B2026" text-anchor="start">~ CAL.BIN time from the clock chip (image boots as 1.53)</text>
+<line x1="130" y1="668" x2="130" y2="728" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="682" r="7" fill="#0F78B4"/>
+<text x="114" y="687" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.57</text>
+<text x="114" y="703" font-size="11" fill="#56616B" text-anchor="end">2018-11</text>
+<text x="150" y="687" font-size="13" fill="#2E7D32" text-anchor="start">+ &quot;-oFF-&quot; notice before auto power-off; one more capacitance digit (to 1.58)</text>
+<text x="150" y="706" font-size="13" fill="#1B2026" text-anchor="start">~ 19 zero bytes when Bluetooth starts (to 2.00)</text>
+<line x1="130" y1="730" x2="130" y2="771" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="744" r="7" fill="#0F78B4"/>
+<text x="114" y="749" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">1.58b</text>
+<text x="114" y="765" font-size="11" fill="#56616B" text-anchor="end">2018-12</text>
+<text x="150" y="749" font-size="13" fill="#1B2026" text-anchor="start">~ side branch: Ohm starts on range 0 again; capacitance digit as 1.57</text>
+<line x1="130" y1="773" x2="130" y2="814" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="787" r="7" fill="#0F78B4"/>
+<text x="114" y="792" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">2.00</text>
+<text x="114" y="808" font-size="11" fill="#56616B" text-anchor="end">2019-05</text>
+<text x="150" y="792" font-size="13" fill="#C0403A" text-anchor="start">- the extra capacitance digit; faster autorange in capacitance and resistance</text>
+<line x1="130" y1="816" x2="130" y2="857" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="830" r="7" fill="#0F78B4"/>
+<text x="114" y="835" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">2.02</text>
+<text x="114" y="851" font-size="11" fill="#56616B" text-anchor="end">2019-09</text>
+<text x="150" y="835" font-size="13" fill="#1B2026" text-anchor="start">~ zero-byte burst at Bluetooth start fixed</text>
+<line x1="130" y1="859" x2="130" y2="938" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="873" r="7" fill="#D63D36"/>
+<text x="114" y="878" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">2.04</text>
+<text x="114" y="894" font-size="11" fill="#56616B" text-anchor="end">2020-02</text>
+<text x="150" y="878" font-size="13" fill="#2E7D32" text-anchor="start">+ CSV Date and Time columns; APO icon off in MIN/MAX</text>
+<text x="150" y="897" font-size="13" fill="#1B2026" text-anchor="start">~ pulse function shows pulse width, not the period</text>
+<text x="150" y="916" font-size="13" fill="#C0403A" text-anchor="start">- 1 kHz LPF compensation; EEPROM record of the log start</text>
+<line x1="130" y1="940" x2="130" y2="981" stroke="#0F78B4" stroke-width="3"/>
+<circle cx="130" cy="954" r="7" fill="#D63D36"/>
+<text x="114" y="959" font-size="15" fill="#1B2026" text-anchor="end" font-weight="bold">2.05</text>
+<text x="114" y="975" font-size="11" fill="#56616B" text-anchor="end">2021-04</text>
+<text x="150" y="959" font-size="13" fill="#2E7D32" text-anchor="start">+ 1 kHz LPF compensation back (&quot;Improved LFP response&quot;)</text>
+<text x="16" y="997" font-size="12" fill="#56616B" text-anchor="start">Published, no change found by these probes: 1.05, 1.07, 1.09, 1.17. Never published: 1.01, 1.03, 1.06, 1.18, 1.54, 2.01.</text>
+</svg>

@@ -1,0 +1,106 @@
+# .github/workflows/frontend-linux.yml
+#
+# Build 121gw-qt (frontend/) on Linux, run its test suites, and start the
+# program once with the demo meter to prove the front panel loads.
+#
+#   Ubuntu 24.04 (amd64, arm64)  the primary platform, native runners
+#   Ubuntu 26.04 (amd64)         the next LTS: newer GCC and Qt, in a container
+#   Debian 12 (amd64)            Qt 6.4.2 and GCC 12, the oldest supported
+#
+# Ubuntu 22.04 is not built: its Qt is 6.2, and 121gw-qt needs 6.4.
+# Dependencies come from frontend/debian/control only, through
+# frontend/scripts/ci/apt-deps.sh.
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend Linux
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-linux.yml'
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-linux.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+jobs:
+
+  linux:
+    name: 121gw-qt Linux (${{ matrix.distro }}, ${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.container }}
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: ubuntu2404
+            arch: amd64
+            runner: ubuntu-24.04
+            container: ""
+          - distro: ubuntu2404
+            arch: arm64
+            runner: ubuntu-24.04-arm
+            container: ""
+          - distro: ubuntu2604
+            arch: amd64
+            runner: ubuntu-24.04
+            container: ubuntu:26.04
+          - distro: debian12
+            arch: amd64
+            runner: ubuntu-24.04
+            container: debian:12
+
+    steps:
+      # A bare image has none of what the hosted runner provides. Runs before
+      # the checkout, so not in frontend/.
+      - name: Prepare the container
+        if: matrix.container != ''
+        working-directory: /
+        run: |
+          apt-get update
+          apt-get install -y git sudo ca-certificates tzdata
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install dependencies
+        run: scripts/ci/apt-deps.sh --runtime
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build
+
+      # --no-tests=error: ctest exits 0 when it finds nothing to run, and a
+      # suite that does not run cannot fail.
+      - name: Test
+        run: QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure --no-tests=error
+
+      - name: Start the program (demo meter, offscreen)
+        run: SMOKE_KEEP="$PWD/front-panel-${{ matrix.distro }}-${{ matrix.arch }}.png" scripts/ci/smoke.sh build/121gw-qt
+
+      - name: Upload the screenshot
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-linux-${{ matrix.distro }}-${{ matrix.arch }}-screenshot
+          path: frontend/front-panel-*.png
+          retention-days: 14
+          if-no-files-found: ignore

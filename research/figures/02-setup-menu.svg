@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="938" viewBox="0 0 1000 938" font-family="sans-serif">
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#56616B"/></marker></defs>
+<rect x="0" y="0" width="1000" height="938" fill="#F4F6F8"/>
+<text x="16" y="32" font-size="20" font-weight="bold" fill="#1B2026">121GW SETUP menu (firmware 2.05)</text>
+<text x="16" y="54" font-size="13" fill="#56616B" text-anchor="start">Short SETUP steps through the pages; the sub display (top right) shows each one. Firmware 2.05, emulated walk + decompile.</text>
+<text x="30" y="86" font-size="12" fill="#56616B" text-anchor="start" font-weight="bold">Page</text>
+<text x="80" y="86" font-size="12" fill="#56616B" text-anchor="start" font-weight="bold">Item</text>
+<text x="250" y="86" font-size="12" fill="#56616B" text-anchor="start" font-weight="bold">Sub display</text>
+<text x="420" y="86" font-size="12" fill="#56616B" text-anchor="start" font-weight="bold">Edit range</text>
+<text x="720" y="86" font-size="12" fill="#56616B" text-anchor="start" font-weight="bold">Stored in</text>
+<rect x="16" y="96" width="968" height="36" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="40" y="119" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">0</text>
+<text x="80" y="119" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Temperature</text>
+<rect x="250" y="101" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="120" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace"> 25.0c</text>
+<text x="420" y="119" font-size="13" fill="#1B2026" text-anchor="start">internal temperature, unit C / F</text>
+<text x="720" y="119" font-size="13" fill="#56616B" text-anchor="start">EEPROM 0x10 (1 = C)</text>
+<rect x="16" y="134" width="968" height="36" rx="4" fill="#EEF1F4" stroke="#C5CCD2"/>
+<text x="40" y="157" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">1</text>
+<text x="80" y="157" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Battery</text>
+<rect x="250" y="139" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="158" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">BAT6.0</text>
+<text x="420" y="157" font-size="13" fill="#1B2026" text-anchor="start">battery volts, read only</text>
+<text x="720" y="157" font-size="13" fill="#56616B" text-anchor="start">-</text>
+<rect x="16" y="172" width="968" height="36" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="40" y="195" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">2</text>
+<text x="80" y="195" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Auto power-off</text>
+<rect x="250" y="177" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="196" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">APO.oN</text>
+<text x="420" y="195" font-size="13" fill="#1B2026" text-anchor="start">APO.oN / APO.oF (30 min)</text>
+<text x="720" y="195" font-size="13" fill="#56616B" text-anchor="start">EEPROM 0x16 (0 = on)</text>
+<rect x="16" y="210" width="968" height="36" rx="4" fill="#EEF1F4" stroke="#C5CCD2"/>
+<text x="40" y="233" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">3</text>
+<text x="80" y="233" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Buzzer</text>
+<rect x="250" y="215" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="234" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">b-On</text>
+<text x="420" y="233" font-size="13" fill="#1B2026" text-anchor="start">b-On / b-OFF (key beeps only)</text>
+<text x="720" y="233" font-size="13" fill="#56616B" text-anchor="start">EEPROM 0x1E (1 = on)</text>
+<rect x="16" y="248" width="968" height="36" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="40" y="271" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">4</text>
+<text x="80" y="271" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">LCD contrast</text>
+<rect x="250" y="253" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="272" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">LcD-4</text>
+<text x="420" y="271" font-size="13" fill="#1B2026" text-anchor="start">0..7 = level 10..17; 0 and 1 not kept</text>
+<text x="720" y="271" font-size="13" fill="#56616B" text-anchor="start">EEPROM 0x1A (12..17, else 14)</text>
+<rect x="16" y="286" width="968" height="36" rx="4" fill="#EEF1F4" stroke="#C5CCD2"/>
+<text x="40" y="309" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">5</text>
+<text x="80" y="309" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Year</text>
+<rect x="250" y="291" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="310" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace"> 2026</text>
+<text x="420" y="309" font-size="13" fill="#1B2026" text-anchor="start">00..99 (20YY)</text>
+<text x="720" y="309" font-size="13" fill="#56616B" text-anchor="start">clock chip (+0x01 in factory mode)</text>
+<rect x="16" y="324" width="968" height="36" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="40" y="347" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">6</text>
+<text x="80" y="347" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Month-day</text>
+<rect x="250" y="329" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="348" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">11-02</text>
+<text x="420" y="347" font-size="13" fill="#1B2026" text-anchor="start">month, then day (two steps)</text>
+<text x="720" y="347" font-size="13" fill="#56616B" text-anchor="start">clock chip (+0x01 in factory mode)</text>
+<rect x="16" y="362" width="968" height="36" rx="4" fill="#EEF1F4" stroke="#C5CCD2"/>
+<text x="40" y="385" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">7</text>
+<text x="80" y="385" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Hour-minute</text>
+<rect x="250" y="367" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="386" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">15-00</text>
+<text x="420" y="385" font-size="13" fill="#1B2026" text-anchor="start">hour 0..23, then minute (two steps)</text>
+<text x="720" y="385" font-size="13" fill="#56616B" text-anchor="start">clock chip</text>
+<rect x="16" y="400" width="968" height="36" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="40" y="423" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">8</text>
+<text x="80" y="423" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Meter ID</text>
+<rect x="250" y="405" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="424" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">00000</text>
+<text x="420" y="423" font-size="13" fill="#1B2026" text-anchor="start">0..99999; short SETUP picks the digit</text>
+<text x="720" y="423" font-size="13" fill="#56616B" text-anchor="start">EEPROM 0x03 (u32)</text>
+<rect x="16" y="438" width="968" height="36" rx="4" fill="#EEF1F4" stroke="#C5CCD2"/>
+<text x="40" y="461" font-size="15" fill="#0F78B4" text-anchor="middle" font-weight="bold">9</text>
+<text x="80" y="461" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Log interval</text>
+<rect x="250" y="443" width="120" height="26" rx="3" fill="#6B7262" stroke="#49504F"/>
+<text x="310" y="462" font-size="15" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">In  1</text>
+<text x="420" y="461" font-size="13" fill="#1B2026" text-anchor="start">0..999 s; 0 = fastest</text>
+<text x="720" y="461" font-size="13" fill="#56616B" text-anchor="start">EEPROM 0x18 (u16)</text>
+<text x="16" y="490" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Mode pages (10-12) exist only in some functions; there the meter starts on page 10 instead of 0.</text>
+<rect x="16" y="508" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="528" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">ACV</text>
+<text x="170" y="528" font-size="13" fill="#1B2026" text-anchor="start">10 frequency (Hz); 11 dBm (600 ohm reference)</text>
+<text x="970" y="528" font-size="12" fill="#56616B" text-anchor="end">read only</text>
+<rect x="16" y="540" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="560" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">ACmV</text>
+<text x="170" y="560" font-size="13" fill="#1B2026" text-anchor="start">10 frequency (Hz)</text>
+<text x="970" y="560" font-size="12" fill="#56616B" text-anchor="end">read only</text>
+<rect x="16" y="572" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="592" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">Continuity</text>
+<text x="170" y="592" font-size="13" fill="#1B2026" text-anchor="start">10 beep mode dN 30 / dN 300 / UP 30 / UP 300 (starts on page 0)</text>
+<text x="970" y="592" font-size="12" fill="#56616B" text-anchor="end">EEPROM 0x14 (0..3)</text>
+<rect x="16" y="604" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="624" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">Diode</text>
+<text x="170" y="624" font-size="13" fill="#1B2026" text-anchor="start">10 test voltage 3 / 15 (changed with RANGE, not SETUP; starts on page 0)</text>
+<text x="970" y="624" font-size="12" fill="#56616B" text-anchor="end">EEPROM 0x12</text>
+<rect x="16" y="636" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="656" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">uA, mA, A (DC)</text>
+<text x="170" y="656" font-size="13" fill="#1B2026" text-anchor="start">10 burden display bd.0n / bd.0FF; 11 burden voltage (when on)</text>
+<text x="970" y="656" font-size="12" fill="#56616B" text-anchor="end">RAM only, lost at power-off</text>
+<rect x="16" y="668" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="688" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">uA, mA, A (AC)</text>
+<text x="170" y="688" font-size="13" fill="#1B2026" text-anchor="start">10 burden display; 11 burden voltage (on) or frequency (off)</text>
+<text x="970" y="688" font-size="12" fill="#56616B" text-anchor="end">RAM only</text>
+<rect x="16" y="700" width="968" height="30" rx="4" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="28" y="720" font-size="13" fill="#1B2026" text-anchor="start" font-weight="bold">VA, uVA</text>
+<text x="170" y="720" font-size="13" fill="#1B2026" text-anchor="start">10 the other quantity (V or I); 11 burden display on/off; 12 burden voltage (on)</text>
+<text x="970" y="720" font-size="12" fill="#56616B" text-anchor="end">page 11: EEPROM 0x1B</text>
+<text x="16" y="756" font-size="14" fill="#1B2026" text-anchor="start" font-weight="bold">Editing a page</text>
+<rect x="16" y="772" width="63" height="24" rx="12" fill="#E2BF55" stroke="#2A2F33"/>
+<text x="47.5" y="789" font-size="12" fill="#221B1B" text-anchor="middle" font-weight="bold">SETUP</text>
+<text x="87" y="789" font-size="13" fill="#1B2026" text-anchor="start">held 0.5 s: value blinks (double beep on read-only pages)</text>
+<rect x="16" y="804" width="52" height="24" rx="12" fill="#4A5560" stroke="#2A2F33"/>
+<text x="42.0" y="821" font-size="12" fill="#F0F4F6" text-anchor="middle" font-weight="bold">REL</text>
+<text x="74" y="821" font-size="13" fill="#0F78B4" text-anchor="start" font-weight="bold">UP</text>
+<rect x="102" y="804" width="90" height="24" rx="12" fill="#4A5560" stroke="#2A2F33"/>
+<text x="147.0" y="821" font-size="12" fill="#F0F4F6" text-anchor="middle" font-weight="bold">1ms PEAK</text>
+<text x="198" y="821" font-size="13" fill="#0F78B4" text-anchor="start" font-weight="bold">DOWN  (both repeat while held; values wrap around)</text>
+<rect x="16" y="836" width="63" height="24" rx="12" fill="#E2BF55" stroke="#2A2F33"/>
+<text x="47.5" y="853" font-size="12" fill="#221B1B" text-anchor="middle" font-weight="bold">SETUP</text>
+<text x="87" y="853" font-size="13" fill="#1B2026" text-anchor="start">held again: save (month-day and hour-minute: first save moves on to the day / minute)</text>
+<rect x="16" y="868" width="63" height="24" rx="12" fill="#E2BF55" stroke="#2A2F33"/>
+<text x="47.5" y="885" font-size="12" fill="#221B1B" text-anchor="middle" font-weight="bold">SETUP</text>
+<text x="87" y="885" font-size="13" fill="#1B2026" text-anchor="start">short, on the meter ID page while editing: select the next digit (ten-thousands first)</text>
+<text x="16" y="916" font-size="13" fill="#56616B" text-anchor="start">About 120 s without a key cancels an edit and restores the old value. SETUP is refused (double beep) while logging or in the recall view.</text>
+</svg>

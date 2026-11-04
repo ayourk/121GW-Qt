@@ -1,0 +1,12 @@
+# site	expected stock callee (bl)	new function	why
+0800772e	Reading_StabilityFilter	sf_dcv	OF-28: own smoothing state (DCV; AC+DC DC phase; DC VA voltage)
+0800780a	Reading_StabilityFilter	sf_dcmv	OF-28: own smoothing state (DCmV)
+08007a88	Reading_StabilityFilter	sf_ohm	OF-28: own smoothing state (Ohm)
+08007eb2	Reading_StabilityFilter	sf_diode	OF-28: own smoothing state (diode)
+08008154	Reading_StabilityFilter	sf_dci	OF-28: own smoothing state (DC current; DC VA current)
+0800a65e	Reading_StabilityFilter	sf_acdc	OF-28: own smoothing state (AC+DC combined value)
+0800b4b2	Reading_StabilityFilter	sf_cap	OF-28: own smoothing state (capacitance)
+080068d2	Reading_StabilityFilterAC	sf_aci	OF-28: own smoothing state (AC current; AC VA current)
+08006a70	Reading_StabilityFilterAC	sf_aci_clamp	OF-28: own smoothing state (VA_ACI_CalClamp)
+08006aba	Reading_StabilityFilterAC	sf_acva_v	OF-28: own smoothing state (AC VA voltage)
+08006bb0	Reading_StabilityFilterAC	sf_acv_6bb0	OF-28: own smoothing state (call at 08006bb0)

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=121gw-qt
+GenericName=Multimeter Front Panel
+Comment=Live front panel, remote control, logging and an MCP server for the EEVblog 121GW multimeter
+Exec=121gw-qt
+Icon=121gw-qt
+Terminal=false
+Categories=Science;Electronics;
+Keywords=multimeter;121GW;EEVblog;Bluetooth;meter;DMM;MCP;
+StartupNotify=true
+StartupWMClass=121gw-qt

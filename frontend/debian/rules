@@ -1,0 +1,23 @@
+#!/usr/bin/make -f
+
+# Names the build directory dh creates (obj-<triplet>), which the test step uses.
+include /usr/share/dpkg/architecture.mk
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --buildsystem=cmake+ninja
+
+# ctest exits 0 when it finds no tests at all; --no-tests=error makes a test
+# phase that ran nothing fail instead of passing. The suites need no display;
+# offscreen keeps a stray QGuiApplication from looking for one.
+override_dh_auto_test:
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	QT_QPA_PLATFORM=offscreen ctest --test-dir obj-$(DEB_HOST_GNU_TYPE) --output-on-failure --no-tests=error
+endif
+
+# Into debian/tmp, so 121gw-qt.install selects what ships (with one binary
+# package dh_auto_install would otherwise go straight to debian/121gw-qt/,
+# where the .install file, which reads debian/tmp, finds nothing).
+override_dh_auto_install:
+	dh_auto_install --destdir=debian/tmp

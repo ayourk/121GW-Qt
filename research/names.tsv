@@ -1,0 +1,855 @@
+# address	name	flags	comment   (f function, n no-return, g global; see scripts/ApplyNames.java)
+# Startup path (docs/startup.md). Confidence: high = read in the decompile here; [video] = EEVblog/121GW-Firmware-Claude RE_NOTES, checked here.
+08025f70	SystemInit	f	CMSIS SystemInit: RCC reset, SetSysClock, then VTOR = 0x08000000 (the BOOTLOADER's table; main moves it). high
+08025fc2	SetSysClock	f	HSE 4 MHz (X2) on, 0x5000-poll timeout; flash 64-bit + prefetch + 1 WS; PWR range 1; PLL HSE x12 /3 = 16 MHz SYSCLK. high
+0802910c	__iar_program_start	fn	IAR C start: data init, then main; never returns (Reset_Handler decompiled garbage past it before). high [video]
+08028fe4	__iar_data_init3	f	IAR init-table walker: zero 0x6EBC B at 0x20001240, LZ-unpack 0x348 B to 0x20000000. [video]
+08024b40	main	fn	VTOR -> 0x08006000 first, then init calls, then the main loop (never returns). high
+080208e0	NVIC_SetVectorTable	f	StdPeriph: VTOR = base | (offset & 0x1FFFFF80); called with (0x08000000, 0x6000). high
+0801b450	Board_LCDInit	f	LCD controller init with the saved contrast (DAT_20000237). [video: PS=3 DIV=0 1/4 duty 1/3 bias PON=4]
+0800ea3a	BootScreen	f	2 s "V-x.xx" boot screen and its key checks (MODE+REL cal, MEM SD cal, RANGE all-segments, SETUP factory). high (Oct 31)
+08014a14	Rotary_Read	f	Rotary switch: GPIOG.IDR bits 7..0, active low, one-hot -> 0x20008066. high (Oct 31)
+20008066	g_rotary	g	rotary position bits (one-hot), Rotary_Read
+20000237	g_lcd_contrast	g	LCD contrast setting (12..17) [video]
+# ST StdPeriph L1 drivers (identified by body; bit-band writes decoded: 0x42000000 + (reg-0x40000000)*32 + bit*4). high
+0801f9fc	DATA_EEPROM_Unlock	f	PEKEYR 0x89ABCDEF, 0x02030405
+0801fa1c	DATA_EEPROM_Lock	f	PECR.PELOCK
+0801fa2e	DATA_EEPROM_ProgramByte	f	FTDW off, strb (checked in the disassembly; was misnamed ProgramWord). high
+0801fa68	FLASH_OB_Unlock	f	OPTKEYR 0xFBEAD9C8, 0x24252627
+0801fa8e	FLASH_OB_Launch	f	PECR.OBL_LAUNCH: reloads option bytes = system reset
+0801faa0	FLASH_OB_BORConfig	f	writes option byte 0x1FF80004 (BOR level)
+0801faee	FLASH_OB_GetBOR	f	(OBR >> 16) & 0xF
+0801fafa	FLASH_ClearFlag	f	
+0801fb00	FLASH_GetStatus	f	
+0801fb60	FLASH_WaitForLastOperation	f	
+0801fd1c	RCC_DeInit	f	
+0801fd7a	RCC_HSEConfig	f	CR byte 2
+0801fd8a	RCC_WaitForHSEStartUp	f	HSERDY, 0x5000 polls
+0801fdca	RCC_MSIRangeConfig	f	ICSCR.MSIRANGE
+0801fde2	RCC_HSICmd	f	bit-band CR.HSION
+0801fdec	RCC_LSEConfig	f	CSR byte 1
+0801fdfc	RCC_LSICmd	f	bit-band CSR.LSION
+0801fe06	RCC_SYSCLKConfig	f	0 MSI, 1 HSI, 2 HSE, 3 PLL
+0801fe1e	RCC_GetSYSCLKSource	f	
+0801fe2a	RCC_GetClocksFreq	f	
+0801ff34	RCC_RTCCLKConfig	f	0x20000 = LSI
+0801ff70	RCC_RTCCLKCmd	f	bit-band CSR.RTCEN
+0801ff78	RCC_RTCResetCmd	f	bit-band CSR.RTCRST
+0801ff80	RCC_AHBPeriphClockCmd	f	
+0801ff9e	RCC_APB2PeriphClockCmd	f	
+0801ffbc	RCC_APB1PeriphClockCmd	f	
+0801ffda	RCC_APB2PeriphResetCmd	f	
+0801fff8	RCC_GetFlagStatus	f	flag >> 5: 1 = CR, else CSR
+08020094	ADC_DeInit	f	
+080200b4	ADC_Init	f	
+08020104	ADC_Cmd	f	
+0802012c	ADC_RegularChannelConfig	f	
+080202ea	ADC_SoftwareStartConv	f	
+080202f4	ADC_GetConversionValue	f	
+080202fa	ADC_GetFlagStatus	f	
+08020314	ADC_GetITStatus	f	
+08020348	ADC_ClearITPendingBit	f	
+080203b4	LCD_Init	f	StdPeriph LCD_Init (FCR prescaler/divider, CR duty/bias)
+080203fa	LCD_Cmd	f	bit-band CR.LCDEN
+08020402	LCD_WaitForSynchro	f	FCRSF, 0x8000 polls
+0802041e	LCD_MuxSegmentCmd	f	bit-band CR.MUX_SEG
+08020426	LCD_PulseOnDurationConfig	f	
+0802043e	LCD_DeadTimeConfig	f	
+08020456	LCD_BlinkConfig	f	
+08020472	LCD_ContrastConfig	f	
+0802048a	LCD_UpdateDisplayRequest	f	bit-band SR.UDR
+08020492	LCD_GetFlagStatus	f	
+0802079c	PWR_RTCAccessCmd	f	bit-band CR.DBP
+080207a4	PWR_PVDCmd	f	bit-band CR.PVDE
+080207ac	PWR_UltraLowPowerCmd	f	bit-band CR.ULP
+080207b4	PWR_VoltageScalingConfig	f	0x800 = range 1
+080207cc	PWR_EnterSTOPMode	f	CR.LPDS + SCB.SCR SLEEPDEEP + WFI/WFE
+08020808	PWR_GetFlagStatus	f	
+08020822	PWR_ClearFlag	f	CR |= flag << 2
+08020848	DBGMCU_Config	f	DBGMCU_CR 0xE0042004
+0802086c	NVIC_PriorityGroupConfig	f	AIRCR | 0x05FA0000
+08020876	NVIC_Init	f	
+0801bd48	GPIO_Init	f	StdPeriph GPIO_Init(port, {pin u32, mode u8, speed u8, otype u8, pupd u8})
+# Board init (docs/startup.md)
+0801be76	Board_Init	f	standby flag; BOR off via option bytes (resets once); VOS range 1; clocks -> MSI 4.194 MHz; RTC/LCD on LSI; debug in low power; GPIO, ADC, timers, NVIC. high
+0801bf1a	Board_ClockSelect	f	arg 0 (main): HSI on, SYSCLK = MSI range 6 (4.194 MHz), LSE off, HSE off (hangs if HSE stays ready); then GPIO/PWR/LCD/SYSCFG/ADC clocks. arg 1: HSE as SYSCLK. high
+0801bf92	Board_RTCClockInit	f	RTC domain reset, LSI on, RTC/LCD clock = LSI. high
+0801bfc6	Board_GPIOClocksOn	f	RCC_AHBPeriphClockCmd(0xFF): GPIOA..H. high
+0801bfde	Board_NVICInit	f	priority group 2 (0x500), four NVIC_Init calls. high
+0800c28c	Board_ProbePF8	f	PF8 input pull-up, 20 reads; low on >= 11 of them -> 0x20007fdf = 1; then PF8 analog. PF8 unlabeled in the CubeMX pin map: board-variant strap? medium
+08024de0	App_StateInit	f	settings + cal from EEPROM, measurement state zeroed (mode, range, MIN/MAX, HOLD, REL, PEAK, LPF, AC+DC, VA). high
+20007fde	g_woke_from_standby	g	PWR_FLAG_WU at boot (Board_Init)
+20007fdf	g_pf8_strap_low	g	Board_ProbePF8 result
+20007d0c	g_bor_level_at_boot	g	FLASH_OB_GetBOR() before Board_Init turns BOR off
+2000803c	g_mode	g	measurement mode 0..24 [video]
+2000803d	g_range	g	range index [video]
+08020908	TIM_TimeBaseInit	f	
+0802096c	TIM_Cmd	f	
+08020988	TIM_ITConfig	f	DIER
+0802099e	TIM_ClearFlag	f	SR = ~flag
+0801c056	Board_GPIOInit	f	pin power-on state; ORDER: rotary/keys in, jack sense in, PD1 PWR_CTL2 high, then PE9 PWR_CTL high (3.6 V analog VDD on; +4.0 V first via PD1), PE8 backlight + PE7 buzzer low, HY3131 lines (CK low, CS/DI high, DO in pull-up), RTC lines, front end via Frontend_SetSwitches(100). high
+0801c2c6	Board_RotaryKeysInput	f	PG0..7 rotary + PG8..15 keys: inputs, pull-up (arg leaves one rotary line out). high
+0801c368	Board_JackSenseInput	f	PE10 (mA) / PE11 (A) jack sense: inputs, no pull. high
+0801c43e	Board_AnalogPins	f	PA4 thermistor, PA5 battery, PF11/PF13/PF14: analog. high
+08013dd4	Board_ADCInit	f	ADC on, single conversion; waits ADONS with NO timeout. high
+0801c486	Board_TIM2Init	f	prescaler 0x104, period 0xA0, update IRQ: 10.02 ms at MSI 4.194304 MHz. high
+0801c4d4	Board_TIM3Init	f	prescaler 0x104, period 0x0F, update IRQ: 0.996 ms at MSI 4.194304 MHz. high
+0800fc60	Frontend_SetSwitches	f	analog front-end switches for a mode: CTL_A PD0, CTL_D PF4, CTL_E PF5, CTL_B PC11, DCmV PD7 (1 kHz LPF case on ACV/ACmV); 100 = none (power-on default). high
+200080b9	g_lpf_1khz	g	1 kHz low-pass filter on (ACV/ACmV) [video]
+0801b4d6	LCD_PinsInit	f	LCD segment/COM pins on GPIOA..E as alternate function (562 B of GPIO setup). medium (by peripherals; body to read)
+0801b708	LCD_SetContrast	f	setting 10..17 -> LCD_ContrastConfig((v-10) << 10). high
+0801a81c	LCD_ClearShadow	f	clears the LCD shadow RAM (Board_LCDInit arg 2). medium
+0801b304	LCD_Flush	f	copies the LCD shadow (0x20007790, 8 words) to LCD->RAM and requests an update. [video] + LCD reach here
+# Interrupts and boot screen (docs/startup.md)
+0802428c	TIM2_IRQHandler	f	10 ms: g_tick10ms (main loop's 10 ms work), countdowns (auto-hold, mode timeouts, Hz 300-tick, 1000-tick -> 080153ac). NVIC preempt 2 / sub 2. high
+08024722	TIM3_IRQHandler	f	1 ms: g_tick1ms, g_ms_countdown--, buzzer PE7 on/off pattern. NVIC preempt 1 / sub 1. high
+080247d8	USART2_IRQHandler	f	BLE: TXE sends g_ble_tx (19 B, one byte per IRQ); RXNE collects g_ble_rx: 0xF4 = 5-byte key frame, 0xF8 = 15-byte set-clock frame -> 0x20008030 ready. Not enabled in Board_NVICInit (later). high
+080248b0	SysTick_Handler	f	calls 0800ed0c. high
+080248b8	SDIO_IRQHandler	f	SD driver 08023476. NVIC preempt 0. high
+0801680c	Keys_Process	f	every 10 ms tick: Keys_Scan, Keys_Dispatch, then a pending BLE key (Key_FromBLE). high
+0801688c	Keys_Scan	f	debounce 2 samples; short press on release, long press at 50 ticks (500 ms); during the boot screen a press fires at once. high
+0801682c	Keys_Dispatch	f	short -> Key_ShortPress(code), long -> Key_LongPress(code). high
+08016bca	Keys_Read	f	PG8..15 keys (active low). high
+08014c3c	Key_ShortPress	f	short-press handler (switch on key bit); boot-screen actions too. [video] + calls here
+0801622c	Key_LongPress	f	long-press handler (Oct 31 list). high
+08014ae6	Key_FromBLE	f	BLE F4 key command -> key event (01-08 short, 81-88 long). high (Oct 31)
+0800b974	HY_SetMode	f	HY3131 for (mode, range): HY_BuildConfig, write it (0800beac), HY_CounterRearm. First call: BootScreen (5, 0). high
+0800b994	HY_BuildConfig	f	20-byte HY3131 config for (mode, range, flags) [video]
+0800bf8c	HY_CounterRearm	f	counter re-arm (reg 0x20 bit 1 toggle, preset 0x1B) [video]
+0800fe00	Frontend_PwrCtl2On	f	PD1 HW_PWR_CTL2 high. high
+0800fd30	Frontend_SetLedEnb	f	PE15 LED_CK / PF6 ENB per mode (diode, ACmV cases). high
+0800fd80	Frontend_SetVA	f	PA11 VA_CTL per mode (14/15 VA). high
+0800fdb0	Frontend_SetTemp	f	PH2 TEMP_CTL: on in mode 5 (temperature). high
+0800fdd0	Frontend_SetFre	f	PA12 FRE_CTL per mode (6-8 Hz/pulse/duty). high
+0800fe14	Frontend_SetCurrentA	f	current-mode switch (10..21, 13..15 VA); pins to confirm. medium
+0800fe74	Frontend_SetCurrentB	f	PE5 AMP_CTL in current modes (16..21). medium
+0801a854	LCD_DrawVersion	f	"V-x.xx" boot text. medium
+0801cd14	CalFile_Save	f	cal.bin to SD (FatFs, 1200 B) [video]
+0801cf06	CalFile_Load	f	cal.bin from SD [video]
+0801150e	CurrentZero_ClearAll	f	all six current-zero slots := 0xA5 + 0; called when calibration mode is entered (MODE+REL at boot; was Cal_Enter). high (emulated)
+200080d0	g_tick10ms	g	set by TIM2 every 10 ms, cleared by the main loop / BootScreen
+200080cf	g_tick1ms	g	set by TIM3 every 1 ms
+2000022e	g_ms_countdown	g	1 ms countdown (TIM3); BootScreen sets 2000 = the 2 s boot screen
+200080cd	g_boot_action	g	BootScreen: 1 all segments (RANGE), 2 calibration (MODE+REL), 3 factory (SETUP)
+200080ce	g_boot_sd_state	g	BootScreen SD cal: 1 prompt, 2 choose, 3 save/load, 4 result shown (holds the screen)
+2000808a	g_cal_mode	g	calibration mode on
+2000808b	g_factory_mode	g	factory mode on (SETUP at boot)
+20007ae0	g_ble_tx	g	19-byte BLE packet being sent (0xF2 ... XOR)
+20007b80	g_ble_rx	g	BLE receive frame (0xF4 key / 0xF8 clock)
+# EEPROM settings (docs/eeprom-settings.md) and BLE / power-off
+0801204c	EE_ReadByte	f	*(0x08080000 + off) & 0xFF. high
+08012000	EE_ReadU16	f	big-endian halfword at 0x08080000 + off. high
+08011f80	EE_ReadU32	f	big-endian word at 0x08080000 + off. high
+080101e2	RTC_ReadReg	f	NJU6350 RTC chip register read (CE, address, byte, release). high
+08010118	BCD_ToBin	f	high
+0800ff18	Settings_LoadClock	f	date/time from the RTC chip (BCD) with defaults (year 16, month 7, ...). high (reader)
+08010f10	Settings_VariantOhm6	f	EEPROM 0x26 != 0xA5: board-variant flag for Ohm range 6. medium
+080104bc	Settings_VariantAcv0	f	EEPROM 0x1F != 0xA5: board-variant flag for ACV lowest range. medium
+0801167c	Cal_LoadRecord	f	calibration record for (mode/slot, range) [video 0x0801167D]
+08011218	Settings_LoadLogInterval	f	EEPROM 0x18 u16, <= 999 else 1. medium
+08011258	Settings_LoadContrast	f	EEPROM 0x1A, 12..17 else 14. high
+080112a4	Settings_LoadApo	f	EEPROM 0x16 APO on/off. high
+080112fc	Settings_LoadTempUnit	f	EEPROM 0x10 temperature unit. high
+08011340	Settings_LoadDiodeV	f	EEPROM 0x12 bool -> 200080b3: diode test 15 V / 3 V. medium
+08011394	Settings_LoadContinuity	f	EEPROM 0x14 continuity mode 0..3. high
+080113dc	Settings_LoadVaBurden	f	EEPROM 0x1B VA burden display. high
+08011410	Settings_LoadBuzzer	f	EEPROM 0x1E == 1 -> 20008078 buzzer enabled. high
+08010f4c	Settings_LoadDateStamp	f	EEPROM 0x01 YYMM, 0 -> 1708. high
+08010f8c	Settings_LoadMeterId	f	EEPROM 0x03 u32, <= 99999 else 0. medium
+0800ed26	APO_Reset	f	APO countdown 1800 s (3600 s in MIN/MAX). high
+0801c390	BLE_Start	f	PF15 high (BLE112 power), PD5/PD6 AF7, USART2 19200 8N1 TX+RX (baud from RCC_GetClocksFreq at run time), RXNE IRQ, NVIC IRQ 38 on. high
+0801c954	BLE_Stop	f	PF15 low, USART2 off. high
+0800c51a	BLE_Toggle	f	start or stop per 0x2000802b, redraw; only caller Key_LongPress: BLE never starts by itself. high
+0800c308	BLE_SendReply	f	echoes the received frame (0x2000802f bytes from 0x20007b94). high
+0801be60	NVIC_EnableIRQ	f	medium
+0801c584	Power_Off	f	shutdown: buzzer, backlight off, RTC lines, Frontend_SetSwitches(100), analog controls low, BLE_Stop, ..., then PE9 low (analog VDD off); first step of App_Sleep. high
+2000802b	g_ble_on	g	BLE wanted on (toggled by the long-press)
+20008078	g_buzzer_enabled	g	EEPROM 0x1E
+200080b3	g_diode_15v	g	EEPROM 0x12 (medium)
+20007fe0	g_variant_ohm6	g	EEPROM 0x26 != 0xA5 (medium)
+20008087	g_variant_acv0	g	EEPROM 0x1F != 0xA5 (medium)
+20000230	g_apo_seconds	g	auto power-off countdown
+# SysTick, sleep, SETUP (docs/startup.md, docs/eeprom-settings.md)
+0800ed0c	SysTick_Work	f	decrements 0x20007d10, which nothing sets: SysTick unused by 2.05. high
+0801c9d8	SysTick_Stop	f	SysTick off (CTRL = 0), clear PWR wake-up flag. high
+0801c522	LowPower_Prepare	f	Power_Off, SysTick off, RCC_DeInit, range 3, MSI range 0 (~65 kHz), HSI/HSE/LSE off, all pins analog, RTC wake-up IRQ off, EXTI wake on rotary lines. high
+0801ca0c	Osc_AllOff	f	HSI, HSE, LSE off. high
+0801ca22	Pins_AllAnalog	f	every GPIO analog (lowest leakage in STOP). high
+0801c61c	Wake_ArmRotary	f	EXTI wake on the rotary lines except the current position (0x20008065). high
+080209a8	RTC_ITConfig	f	RTC write-protect keys 0xCA/0x53, CR/TAFCR interrupt bits. high
+08024eca	App_Sleep	f	auto power-off only (main: g_apo_seconds -> 0): BLE off, LowPower_Prepare, PWR_EnterSTOPMode; dial turn wakes it and re-runs Board_Init, App_StateInit, Board_LCDInit, BootScreen. Dial OFF cuts the battery in hardware. high
+08015410	Setup_NextPage	f	SETUP page counter 0x20008037; page count depends on mode. high
+080165f4	Setup_Change	f	UP/DN on a SETUP page -> that page's handler. high
+08015be0	Setup_TempUnit	f	page 0 -> EEPROM 0x10. high
+08015a22	Setup_Apo	f	page 2 -> EEPROM 0x16. high
+08015a74	Setup_Buzzer	f	page 3 -> EEPROM 0x1E. high
+08015b54	Setup_Contrast	f	page 4 -> EEPROM 0x1A. high
+08015c94	Setup_Year	f	page 5 (RTC; date stamp 0x01 in factory mode). high
+08015d40	Setup_MonthDay	f	page 6 (RTC; date stamp 0x01 in factory mode). high
+08015e74	Setup_HourMinute	f	page 7 (RTC). high
+08015f7c	Setup_MeterId	f	page 8 -> EEPROM 0x03. high
+08015ac0	Setup_LogInterval	f	page 9 -> EEPROM 0x18. high
+08015c20	Setup_Continuity	f	page 10 in continuity -> EEPROM 0x14. high
+080160e8	Setup_CurrentBurden	f	page 10 in AC/DC current (RAM only). high
+08016190	Setup_VaBurden	f	page 11 in VA modes -> EEPROM 0x1B. high
+080159c8	Setup_DiodeVoltage	f	key in diode mode -> EEPROM 0x12. high
+08015f44	Settings_SaveDateStamp	f	EEPROM 0x01 = YY*100+MM. high
+080120d0	EE_WriteByte	f	high
+080120a8	EE_WriteU16	f	big-endian. high
+08012068	EE_WriteU32	f	big-endian. high
+08012148	EE_WriteByteRetry	f	up to 10 tries until FLASH status complete. high
+080120f0	EE_ProgramByte	f	unlock, DATA_EEPROM_ProgramByte (strb), lock. high
+08011330	Settings_SaveTempUnit	f	EEPROM 0x10 temperature unit. high
+080112ec	Settings_SaveApo	f	EEPROM 0x16 APO on/off. high
+08011438	Settings_SaveBuzzer	f	high
+08011294	Settings_SaveContrast	f	high
+08011248	Settings_SaveLogInterval	f	high
+08011384	Settings_SaveDiodeV	f	high
+080113cc	Settings_SaveContinuity	f	high
+08011400	Settings_SaveVaBurden	f	high
+08010fb8	Settings_SaveMeterId	f	high
+08010f74	Settings_SaveDateStamp16	f	writes 0x01 from 0x20007f9a. high
+2000022c	g_log_interval	g	EEPROM 0x18
+20008039	g_apo_off	g	EEPROM 0x16: 0 = auto power-off ON (inverted; was g_apo_enabled). high
+200080ab	g_temp_unit	g	EEPROM 0x10
+200080b6	g_continuity_mode	g	EEPROM 0x14
+200080a8	g_va_burden_display	g	EEPROM 0x1B
+20007d14	g_meter_id	g	EEPROM 0x03
+20007f9a	g_date_stamp	g	EEPROM 0x01 YY*100+MM
+20008037	g_setup_page	g	SETUP page index
+# HY3131 driver (docs/hy3131.md)
+0800c03c	HY_Write	f	(buf, addr, n): DI high, CK low, CS low, delay(10), addr<<1, n bytes (auto-increment), CS high. high (traced + emulated)
+0800c0c0	HY_Read	f	(addr, n): addr<<1|1 + blank clock, n bytes into the mirror 0x200077d0. high (traced + emulated)
+0800c16c	HY_ShiftOut	f	byte MSB first: DI then CK pulse; arg 1 adds the read's blank clock. high
+0800c138	HY_ShiftIn	f	CK high, sample PF3 (DO), CK low; MSB first. high
+0800c1bc	HY_ClockPulse	f	CK high then low. medium
+0800ecf6	Delay_Loop	f	bare busy loop (timing scales with the CPU clock). high
+08006124	HY_Poll	f	main loop: PF3 (DO = IRQ while CS high) high -> HY_Service; capacitance extra pass. high
+0800614e	HY_Service	f	read 52 registers 0x00-0x33, INTF = 0, flags = INTF & INTE -> AD1 / RMS / peak / counter handlers. high
+0800beac	HY_SetIrqMask	f	INTF = 0 and INTE by mode (AD1, AD1+CT, AD1+RMS, CT). high
+080061e4	HY_OnAD1	f	AD1 conversion ready (AD1F). high (dispatch)
+08008208	HY_OnRMS	f	RMS ready (RMSF). medium
+0800a7fc	HY_OnPeak	f	peak-hold ready (R29 bit 2), not in AC+DC. medium
+0800aa00	HY_OnCounter	f	counter done (CTF). medium
+200077d0	g_hy_mirror	g	HY3131 register mirror 0x00-0x33 (52 bytes)
+# AD1 path, battery, thermistor (docs/hardware-quirks.md)
+080062f8	HY_AD1Signed	f	24-bit AD1 from the mirror; sign conversion -(0xFFFFFF - raw) for raw > 0x800000 (off by one: -1 reads 0; 0x800000 stays positive). high
+08006342	HY_AD1Average	f	16 samples (DCV, DCmV, DC current), Ohm 8 (range 5: 1); returns true when an average is ready (0x20007dd4). high
+08007714	Mode_DCV_OnAD1	f	DCV: on average -> 08006418 (cal), 0800b754, display flag 0x2000805d; per sample 080064d6. high
+08006540	Mode_LowZ_OnAD1	f	medium
+080079c4	Mode_Ohm_OnAD1	f	medium
+08007840	Mode_Temp_OnAD1	f	medium
+08007fa8	Mode_DCI_OnAD1	f	DC current modes 17/19/21. medium
+0800664a	Mode_ACI_OnAD1	f	AC current modes 16/18/20. medium
+080137b4	ADC_ReadOnce	f	PA5 (arg 1, battery) or PA4 (arg 0, thermistor), 384-cycle sample, ADC on then off. high
+080134da	Battery_Update	f	PA5 -> linear table (10.50..3.00 V) -> 20-sample trimmed mean -> 0.1 V; low under 4.1 V after 10 readings. high
+08013728	Battery_TableToCentivolts	f	16-entry linear table at 0x08028c9c: raw 0xC30..0x3FC -> 1050..300 (10 mV). high
+080135b0	TrimmedMean20	f	last 20 values, sorted, drop 5 high + 5 low, mean of 10. high
+0801381e	Thermistor_Update	f	PA4 -> 0801385a. high
+0801c97e	ADC_Off	f	ADC and its clock off. high
+20007fba	g_battery_dV	g	battery voltage, 0.1 V
+200080f9	g_low_battery	g	battery < 4.1 V
+2000805d	g_display_update	g	set when an averaged reading is ready
+# Measurement core (docs/measurement-core.md); IAR runtime identified by running (scripts/emu_call.py)
+08012f60	__aeabi_i2f	f	library (emu_call: -5 -> -5.0)
+08012f74	__aeabi_ui2f	f	library (0xFFFFFFFF -> 4.29e9)
+08012f94	__aeabi_fdiv	f	library (6.0, 2.0 -> 3.0)
+08013168	__aeabi_f2d	f	library
+080131b8	__aeabi_dadd	f	library
+080132a0	__aeabi_d2iz	f	library: truncates toward zero (-2.6 -> -2)
+08006418	Cal_Apply	f	average -> offset (Cal_Offset) -> gain (Cal_Gain) -> 0x20007d64. high
+0800eef0	Cal_Offset	f	not in diode mode: Cal_SubtractOffset, or Cal_OffsetAccumulate 0800ef44 while an offset capture is armed (0x2000808c). high
+0800f2fc	Cal_SubtractOffset	f	value - 0x20007e00 (VA: 0x20007e24 / 0x20007e28). high
+0800f37e	Cal_Gain	f	Cal_DivideGain; during a gain capture Cal_DcGainCapture 0800f470 (was misread as a VA variant). high
+0800f3b8	Cal_DivideGain	f	trunc(value / gain + 0.5); gain 0 -> 0; ACV/ACmV with 1 kHz LPF: gain / 10. high
+0800f648	Cal_GetGain	f	0x20007e10 (VA: 0x20007e2c / 0x20007e30). high
+0800b754	Reading_StabilityFilter	f	(value, threshold, n): running mean of up to n; restart on a jump > threshold. high
+080064d6	Reading_FastPath	f	every sample: offset + gain on the raw value -> 0x20007d68 (bargraph). high
+0800dcfc	Display_Update	f	autorange, then the display steps (to name). high
+0800de24	Autorange	f	up > FS + FS/10 (FS/12 w/ 0x200080f8), down < FS/10; not in MIN/MAX, manual, HOLD. high (traced + emulated)
+20007e00	g_cal_offset	g	offset of the current mode/range (int32)
+20007e10	g_cal_gain	g	gain (float = uint32 / 1e6)
+20007d64	g_reading	g	calibrated, filtered reading in counts (display value)
+20007d68	g_reading_fast	g	per-sample calibrated reading (bargraph)
+20007d60	g_full_scale	g	full scale of the current mode/range (table 0x08025a3c)
+20007dd4	g_ad1_average	g	block average of AD1
+# Mode handlers (docs/modes.md)
+080077f0	Mode_DCmV_OnAD1	f	cal, filter (5, 10). high
+08006aec	Mode_ACV_OnAD1	f	AD1 of the AD8436 output: AC offset, negatives -> 0, gain, filter (20, 10). high
+080069b4	Mode_ACmV_OnAD1	f	as ACV. high
+080078b8	Mode_Continuity_OnAD1	f	Ohm handler + beeper on the fast reading. high
+08007e84	Mode_Diode_OnAD1	f	15 V: /10; variant +500 (PF8 strap low, 15 V, > 14000); beeps. high
+08008b8c	Mode_ACVA_OnAD1	f	time-shared V / I (3 / 6 displays). high
+080084e0	Mode_DCVA_OnAD1	f	time-shared V / I with the DCV handler. high
+0800b540	Mode_Cap_Poll	f	capacitance: range forcing after a measurement. medium
+0800ac1c	Counter_Frequency	f	medium
+0800b070	Counter_PulseWidth	f	medium
+0800b2d8	Counter_Duty	f	medium
+0800f368	Cal_SubtractOffsetAC	f	medium
+0800f7b8	Cal_AcGainCapture	f	calibration mode, MEM: 16-block average, two-point fit (10% / 100%), writes the record; writes the 0xA5 variant markers. high (emulated)
+0800f0ac	Cal_AcOffsetCapture	f	calibration mode, SETUP: 16-block average -> 0x20007e04, then 'offset done' 0x2000808d. high (emulated)
+0800a5ba	HY_RMS_Discard	f	empty (2 bytes): the HY3131 digital RMS result is not used. high
+20007d7c	g_va_volts	g	VA: voltage half
+20007d80	g_va_amps	g	VA: current half
+200080c4	g_tdm_channel	g	time-shared channel (0 = main quantity, 1 = burden / current)
+# Beeper and button-map support
+0800ee7a	Beep	f	(reset_apo, toggles, ms): TIM3 drives PE7; every beep resets APO. high
+0800ee50	Beep_Short	f	1 x 100 ms: key accepted. high
+0800ee5e	Beep_Long	f	1 x 200 ms. high
+0800ee6c	Beep_Double	f	3 toggles x 50 ms = two pulses: key not available / diode jump. high
+0801912c	Bar_ScaleMark	f	bargraph scale marks: COM2 SEG7 (normal) vs COM3 SEG8 (arg 1), then a range label (08019268). medium
+08018fa8	Bar_Draw	f	bargraph drawing (calls Bar_ScaleMark). medium
+# SD card + logging (docs/sd-card.md), 2026-11-02
+080226ac	SD_GetState	f	ST SD_GetState: SD_Detect (always present), SD_SendStatus (CMD13), returns card state (status >> 9) & 0xF (4 = TRAN), 0xFF on error (shift checked in the disassembly; was SD_DiskStatus). high
+080226d6	SD_Detect	f	returns 1 = present: the board has no card-detect switch (no net in the schematic). high
+080226e6	SD_PowerON	f	ST sdio_sd.c: SDIO init 400 kHz, power on, CLKEN, CMD0, CMD8 (0x1AA; answer = SD 2.0, HCS), CMD55 + ACMD41 loop (0xFFFF tries). high (emulated)
+08022fce	SD_ReadBlock	f	CMD16 (512), data config, CMD17, SDIO IT mask 0x32A, DMA on, DMA2 ch4 RX; SDHC block address = byte address >> 9. high (emulated)
+08023100	SD_WriteMultiBlocks	f	CMD16, CMD55 + ACMD23 (pre-erase count), CMD25, DMA2 ch4 TX; StopCondition = 1 (CMD12 after). high (emulated)
+080232e0	SD_WaitWriteOperation	f	waits DMAEndOfTransfer / TransferEnd / TransferError (~1000 polls only), then TXACT clear, then CMD12. high (emulated)
+080233be	SD_StopTransfer	f	CMD12. high
+08023408	SD_SendStatus	f	CMD13 with RCA; status word to *param_1 (0x26 = invalid parameter if NULL). high
+08023558	SD_CmdError	f	waits CMDSENT (CMD0, no response). high
+080235a4	SD_CmdResp7Error	f	CMD8: CMDREND = SD 2.0 card, timeout = 1.x card. high
+0802361c	SD_CmdResp1Error	f	waits CCRCFAIL/CTIMEOUT/CMDREND, RESPCMD == command, card status & 0xFDFFE008 == 0, else error per bit. high
+08023752	SD_CmdResp3Error	f	ACMD41 (no CRC check). high
+080237aa	SD_CmdResp2Error	f	CMD2/CMD9 (long response). high
+0802381c	SD_CmdResp6Error	f	CMD3: RCA from RESP1 >> 16. high
+08023a8c	SD_FindSCR	f	CMD16 (8), CMD55, ACMD51, FIFO polling read of the 8-byte SCR. high (emulated)
+08023de8	SD_LowLevel_DMA_TxConfig	f	DMA2 channel 4, memory to SDIO.FIFO, words, TC interrupt. high
+08023e58	SD_LowLevel_DMA_RxConfig	f	DMA2 channel 4, SDIO.FIFO to memory. high
+0802408c	SDIO_Init	f	CLKCR fields. library
+080240b6	SDIO_ClockCmd	f	bit-band CLKCR.CLKEN (0x422580A0). library
+080240be	SDIO_SetPowerState	f	SDIO.POWER. library
+080240ce	SDIO_DMACmd	f	bit-band DCTRL.DMAEN (0x4225858C). library
+080240d6	SDIO_SendCommand	f	ARG, then CMD (index, response, CPSM). library
+080240fe	SDIO_GetCommandResponse	f	RESPCMD. library
+08024106	SDIO_GetResponse	f	RESP1 + offset. library
+0802411c	SDIO_DataConfig	f	DTIMER, DLEN, DCTRL. library
+08024150	SDIO_ITConfig	f	MASK set/clear. library
+0802416e	SDIO_GetFlagStatus	f	STA & flag. library
+08024188	SDIO_ClearFlag	f	ICR. library
+080248c0	DMA2_Channel4_IRQHandler	f	SD DMA end of transfer (vector 53). high
+0801657c	Log_Toggle	f	long MEM (key 8; also key 0x28): logging flag 0x20007fe1 toggled, then Log_Start or Log_Stop. high (emulated)
+080109ea	Log_Start	f	clears hold/rel/minmax, range locked (manual), log state reset, 0x2000801c = 1 (main opens the file). high (emulated)
+08010af8	Log_Stop	f	writes the MAX/MIN footer and closes. medium
+0801d126	Log_WriteRetry	f	Log_Write up to 20 times; then bumps a part counter and switches to a new file MMDDNNPP.csv (no header), 20 more tries; then flag 0x20008062. high
+0801d1a8	Log_Write	f	HSE on, f_mount, new file (header) or append the pending rows (several per call), read-back check (Log_VerifyWrite), close, MSI back; MAX/MIN on stop; stops logging after 600,000 rows (row counter 0x20007d40 > 599999). medium
+0801e82e	Log_FormatRow	f	writes ONE CSV field per call by kind (0x6E/0x6F = row date/time, 0-4 header fields); strings from RAM 0x20000020.. . medium
+08019808	Show_SAvEd	f	"SAvEd" (shown after a cal save AND a cal load: same routine). high (emulated)
+0801982c	Show_Err	f	"-Err-" (cal save/load failed: e.g. 9 = EEPROM read-back mismatch). high (emulated)
+# calibration + current zero (docs/calibration.md), 2026-11-02
+080114bc	CurrentZero_Store	f	(mode 0x10-0x15, range 0, value): EEPROM slot 0xA5 + u32 BE. high
+08011448	CurrentZero_Load	f	trim 0x20007e0c from the slot when its marker is 0xA5, else 0; on mode/range change. high
+0801154e	CurrentZero_Slot	f	mode 0x10..0x15 -> EEPROM 0x4D0 0x4D8 0x4E0 0x4E8 0x4F0 0x4F8. high
+08015728	Cal_CaptureRejected	f	1 for modes/ranges without calibration (LowZ, pulse, duty; Hz/diode/cap on range > 1 for offset). high
+08015768	Cal_ArmCapture	f	0 = offset (0x2000808c), 1 = gain (0x2000808e), after Cal_AcFreqWindow. high (emulated)
+0800f13c	Cal_AcFreqWindow	f	AC modes: reference frequency window (whole Hz: 8-12 kHz, 18-22 kHz, >= 90 kHz) per range; sets the per-point flags 0x2000809c.. . high
+08012f28	Freq_ToDeciHz	f	counter value scaled by its range (/1000, /100, /10, x1, x10): undoes the range divisor, result in whole Hz (the name is historical). medium
+# naming pass 2026-11-02, batches B-D (agent proposals, spot-checked)
+0800d190	Setup_EditTimeout	f	main every 0.5 s (TIM2 sets 0x200080d3) while editing SETUP (0x2000806e): count 0x20008070 (reset by keys) > 240 = ~120 s idle -> edit cancelled, unsaved value restored per g_setup_page (8 meter id from g_meter_id; 5/6/7 RTC year/month-day/hour-minute shadows 0x200080dd..e1 from 0x200080d7..db; 2/3/0/10 reload APO/buzzer/temp unit/continuity from EEPROM), redraw 0x20008062. high
+0800d2d0	Mode_ApplyChange	f	(stop_log) main when 0x2000804a (mode changed) or 0x2000804b (range changed): clears VA/TDM/REL/PEAK/LPF/AC+DC/hold state; on a mode change also resets SETUP page (Setup_InitialPage), MIN/MAX, range (0, Ohm 6, kept with PEAK), stops logging if arg 1 and logging (0x20007fe1); then Reading_SetSettleCount, full scale, Cal/HY reconfig (0800fbe8(mode,range)), APO_Reset on mode change. [video "full mode/range change", confirmed] medium
+0800d718	Setup_InitialPage	f	g_setup_page start: factory mode -> 5 (year); ACV (no AC+DC), ACmV, AC/DC VA, AC/DC current -> 10 (mode page; current also 0x200080aa = 100); else 0 (temp unit). high
+0800d920	Display_DecimalPlaces	f	(mode, range) -> digits after the decimal point, e.g. DCV r0..3 = 4,3,2,1 (5.0000/50.000/500.00/600.0), Ohm 3,2,4,3,2,4,3, LowZ 1, continuity 2, diode 4 (3 with 15 V); mode 0x19 -> 1. [video "decimal point for (mode, range)", confirmed] high
+0800db48	Reading_SetSettleCount	f	0x20000238 = display updates to discard after a mode/range change, per mode (ACV 3, ACmV 4, Hz/pulse/duty/continuity 0, Ohm 1-2, DCV 2, DCmV 1, LowZ DC 5, cap 1, current w/ burden 3/0, else 3; AC+DC 1, PEAK 5). Autorange decrements it (sets 0x2000805c) and Display_Update skips 0800e848 until 0. high
+0800e30c	Hold_AutoHoldUpdate	f	Display_Update step with HOLD/auto-hold (0x2000804f/0x20008050): only |reading| > 999 counts (Ohm/continuity: > 999 and not OL); new value held (0x20007da0, beep 0800eed0(50), log flag 0x20007fe2) when two successive readings agree within +-20 and differ from the held one by > 400; otherwise freezes the display (g_display_update = 0). medium
+0800e604	MinMax_Update	f	Display_Update step, MIN/MAX on (0x2000804e) and not HOLD: max 0x20007d88, min 0x20007d8c, running mean 0x20007d90 (exact integer mean with remainder 0x20007d94, count 0x20007d98 capped at 1e6); OL sets max/min to +-100000; g_reading = selected value for states 1..3. high
+0800e758	MinMax_Selected	f	(live) value of MIN/MAX state 0x2000804e: 1 MAX, 2 MIN, 3 AVG, 4 (arg 1) live 0x20007d6c; sets OL flag 0x20008046 / sign 0x20008045 at +-100000. high
+0800e848	Display_VoltageWarning	f	Display_Update step: 0x200080b1 = high-voltage icon (>= 30 V: DCV/ACV r1 30000, r2 3000, r3 300 counts; LowZ 300; VA V-half >= 30000 in ranges 1/3; or OL) -> 0801a370 (LCD shadow 0x20007794 bit 7); 0x200080b2 = >= 600 V or OL on the 600 V range/LowZ -> TIM2 beeps 500 ms every other 0.5 s. high
+0800ed64	Counter_AcGateAlternate	f	every 10 ms in ACV/ACmV/AC current (no burden, no AC+DC) and LowZ-AC: after 100 ticks (1 s; LowZ 2000 = 20 s) toggles 0x2000809b and the counter preset 0x2000001c 0x8000/0xE000 (Hz sub-display gate, 0x20007e38 = 0x1000000 - preset*256) and re-sends HY_SetMode. medium
+0800f470	Cal_DcGainCapture	f	(sample) Cal_Gain path while gain capture 0x2000808e (or Ohm r6 trim 0x20008090): 64-bit sum over 0x20008095 samples (Ohm r5/r6 and the trim drop the first 8), /16 (Ohm r5 /8, r6 /4) via __aeabi_ldivmod -> 0x20007e20, Cal_ComputeGain, store gain (Cal_StoreField 1); Ohm r6 trim = avg/gain - 30000 -> EEPROM 0x178; in progress returns sample x 60.80732 (display). medium
+0800f8e4	Cal_AcFreqPointStore	f	(point 1..4, reading) AC freq-response cal: error vs nominal (points 1/3 at 10% = 5000, 2/4 at 100% = 50000; ACV r3 600/6000) -> 0x20007e4c/50/54/58, then 08011e88 writes it s16 to EEPROM; points flagged by Cal_AcFreqWindow (0x2000809c..f). medium
+0800f9f0	Cal_ComputeGain	f	(va_current) g_cal_gain = captured average 0x20007e20 / reference counts for (mode, range): 50000 default, 30000 for range 2 of DCV/ACV/ACmV and diode, 6000 range 3 (600 V), 10000 A range 2 (and VA current r>=2), cap 10000 (r5 1000), PEAK 42426.4 (30000 x sqrt 2). high
+08010516	Record_Snapshot	f	main every 100 ms (0x200080d1, after Settings_LoadClock): current reading as a record: code 0x20007fee = mode + range*32, flags 0x20007fef (b0 LowZ AC, b1 0x20008099, b2 LPF, b3 PEAK, b4 AC+DC, b5 deg F), value via Record_EncodeMain; sub (Hz code range*32+6 or burden 0x19, 0x20007d2c) and third (VA current mode code, 0x20007d30), b7 = OL. high
+08010908	Record_EncodeMain	f	main value 0x20007d28 as magnitude + sign: ~x with flag 0x40 for negatives, OL -> 0x7FFFFFFF + 0x80 (0xC0 negative OL, from 0x20008049); V/A modes take g_reading_fast (per-sample), temp/Hz/pulse/duty/Ohm/cap g_reading. high
+08011b40	Cal_StoreField	f	(field, value) EEPROM write for the current mode/range record T[mode]+16*range: 0 offset, 1 gain (g_cal_gain x 1e6; cap x 1e4 r4 PF8-low / 1e5; Hz: crystal 0x104), 2 +8, 3 +12 (value*1e4 float bits); PEAK 0x2d0/0x2d4; VA -> 08011dce; 200 temp trim s16 0x2e0 (+-1000); 150 Ohm r6 trim u32 0x178 (+-3000). high
+08012260	Record_Load	f	(index) unpack stored record from the RAM ring (60-byte column arrays 0x20007810..0x20007aa4, u32 values 0x200073c8/0x200074b8/0x200075a8): date/time 0x20008007..0c, main code -> mode 0x2000801e / range 0x2000801f, flags -> 0x20007fe5..ea, values 0x20007d1c/20/24; inverse of 0801217c. Used by memory recall and the logger. high
+080124f4	AcFreq_Correction	f	(reading, cal pts 1-4, type, counter, counter range, variant_acv0) frequency-response correction (counts) for AC: type 0/1 ACmV r0/1, 2/3 ACV r0/1 (-> AcFreq_CorrectionACV), 4/5 ACV r2/r3, 6/7 AC uA/mA (AC A type 8 rejected); only freq > 5.0 Hz, reading < 55000 (600 V r: < 6600); interpolates breakpoint tables 0x0802900c / 0x080290f0 and per-level percent tables 0x08028a14.. / 0x08028e04.. scaled by the stored points. medium
+080129ee	AcFreq_CorrectionACV	f	ACV ranges 0/1 part of AcFreq_Correction: 9-point frequency tables split at 2000.0 Hz (0x08029030 / 0x08029054), two-level percent tables (0x08028aa4.. variant_acv0 ACV r0, 0x08028b34.., r1 0x08028bc4..), interpolated between the 10% and 100% cal points. medium
+080133b4	__aeabi_fsub	f	library: float a - b (flips b's sign, shares 0x080132fc add path of __aeabi_fadd); emu_call 5-2 = 3, -1.5-2 = -3.5. high (emulated)
+0801385a	Thermistor_Process	f	(raw PA4) < 51 counts 10 times -> thermistor fault 0x200080ac (cold junction 0x20007e7c = 0); else 10-sample moving mean 0x20007fd0 -> 08013aac (0.01 deg C) + trim 0x20007fbe; cal mode MEM (0x20008096): trim = 2300 (23.00 C) - value -> EEPROM 0x2e0 (Cal_StoreField 200); shown /10 via 08013cf8 unless 0x200080af. high
+08013ef4	sqrt	f	library: double sqrt (IAR), errno EDOM (0x21) for negatives; emu_call 16 -> 4, 3 -> 1.732, -4 -> NaN. Callers 0800827c (VA), 0800a6a8. high (emulated)
+08014028	__aeabi_uldivmod	f	library (IAR/AEABI): u64 r0:r1 / r2:r3, quotient r0:r1 (remainder r2:r3); 1000000007/10 -> 100000000. high (emulated)
+0801417c	Jack_Poll	f	A/mA jack sense from main: PE10 low = 1 (mA jack), PE11 low = 2 (A jack); 10-tick debounce (0x2000023b), 0x20008075 = lead in mA jack; swaps A<->mA modes 20<->18, 21<->19, VA 15<->14, 24<->23 (redraw via 0x0800d2d0(1)); 0x20008076 = wrong-jack " LEAD" warning when a lead is in a current jack in a non-current mode (uA modes: A jack only). high [video: jack sense, confirmed] (emulated: V + mA lead -> " LEAD"; A dial + mA lead -> mode 21 -> 19)
+080143ee	Mode_FromRotary	f	on a dial change (0x20008064 via 0x08014954): one-hot g_rotary 0x20008065 -> g_mode (LowZ = 0, other positions from the per-position last-mode loaders 0x08010ff0.. reading EEPROM 0x08..0x0E; 0x82 at 0x08 = ACV with AC+DC); clears HOLD/MIN-MAX/REL/LPF/peak state, sets redraw 0x2000804a. high
+08014500	Mode_Cycle	f	MODE short press (from Key_ShortPress): next g_mode within the dial group: DCV->ACV->ACV+AC+DC (0x08014708 toggles 0x200080ba)->DCV; DCmV->ACmV->Temp; Hz->pulse->duty; Ohm->cont->diode->cap; uA: 13->17->16->22; mA 18<->19; A 20<->21; VA 14->23->14, 15->24->15; 0x20008074 = counter mode (6..8); saves the mode per position (0x08011154 -> EEPROM 0x08..0x0E); clears sub icons (0x0801a760). high [video: MODE cycle, confirmed]
+08016e08	LCD_DrawMain	f	main 5-digit display, in priority: Ohm hold-off countdown 0x2000805a; " LEAD" (0x20008076); "-----" in VA modes (0x200080bf); calibration prompts -O-nn/-G-nn/-4-nn/-5-nn/-3-nn (0x08019698, nn = 0x20008095) and their end texts OFF-E/G-END/400-E/5KEND (0x08019738) from flags 0x2000808c..0x20008094; blank; " OFL" (0x20008046); else g_reading via 0x08017100 (|value| >= 100000 shown /10 with one less decimal when 0x20008058). high
+080172a8	LCD_DrawUnits	f	(mode, range, ac, show_acdc): main unit icons per g_mode: V, mV, ms (pulse), % (duty), OHM+BEEP (cont), DIODE+V, uA/mA/A, VA = V+A with AC or DC; LowZ also draws the LowZ icon and AC or DC from args 3/4 (0x20008098/0x20008099); Hz/Ohm/cap via 0x08017858/0x080177f2/0x080177ac; A modes 20/21 show m on range 0, VA 15/24 on range < 2. high [video: unit icons, confirmed]
+0801797c	LCD_DrawSub	f	sub display by g_setup_page: 0 temperature (0x20007fcc), 1 battery, 2 APO, 3 buzzer, 4 contrast, 5..7 date/time (live or edit copy by 0x2000806e), 8 meter ID, 9 log interval, 10/11/12 mode pages (ACV: 10 Hz, 11 dBm; current: bdOn/bdOFF and burden voltage; VA: V or I half, bd flag, burden; diode 15/3 V; continuity mode), 100 = logging count 0x20007d38; overrides for message states 0x2000801b/0x2000801d and cal mode (0x20008097 countdown). high (emulated: ACV page 10 '1.000', 11 '8.239')
+08018228	LCD_SubBurden	f	(value, scale): burden voltage on the sub display as "b" + 4 digits; scale 0 -> /1000 rounded, 100 -> as is, else /100 rounded; result to 0x20007fca; "b OFL" when scale 100 and 0x200080a7 (burden > 5000 counts); sub minus sign; 0x08018356 instead when 0x200080aa. high
+08018590	LCD_SubDbm	f	ACV SETUP page 11: dBm 0x20007e94 (float, computed by 0x0800a74c = 10*log10(V^2/0.6), 600-ohm reference) shown with 3/2/1/0 decimals by magnitude (<10, <100, <1000), sign on the sub minus; copy to 0x20007e98; " OFL" when 0x20008046. high (emulated: 2.0000 V -> '8.239')
+08018b80	Bar_Segments	f	lights bargraph segments 1..g_bar_count (0x20008041, 0..25) after Bar_Draw via 0x08018f14, clearing unlit ones with Bar_ClearRange(25, n) per segment (quadratic, harmless); called from 0x08018b14 except Hz/pulse/duty/temp/cap. high [video: bargraph, confirmed]
+08019408	Bar_ClearRange	f	(hi, lo): clears bargraph segments hi down to lo (fall-through switch; index 0 = the bar0 mark COM0 SEG1). high
+08019b48	LCD_ClearUnits	f	clears the main unit icons (OHM, n, m, Hz, F, V, BEEP, A, DIODE, k, u, M, %, LowZ and one more COM0 bit); ms kept while 1 ms PEAK (0x200080b7). high
+08019e24	LCD_DrawMinMaxIcons	f	(flush): MIN/MAX/AVG icons from 0x2000804e (1 MAX, 2 MIN, 3 AVG, 4 all three); in 1 ms PEAK (0x200080b7) MAX or MIN by 0x200080b8; none while logging (0x20007fe1) or 0x20007fe4; arg 1 -> LCD_Flush. high
+0801a17c	LCD_DrawAcDc	f	AC / DC icons (and COM1 SEG32, likely the "+" of AC+DC) by mode: AC for 2/4/16/18/20, DC for 1/3/17/19/21, all three with AC+DC 0x200080ba; in recall/view state 0x20007fe4 uses the saved mode 0x20007feb and flag 0x20007fe9. high
+0801a440	LCD_DrawSubUnits	f	sub-display unit icons per SETUP page and mode (page 1 V, page 11 ACV dBm segments COM0 SEG18/19, Hz/kHz on frequency pages, burden pages, diode/VA via 0x0801a3a4/0x0801a6d8); skipped in cal mode and on page 100; also called from HY_OnCounter. medium
+0801a950	LCD_DrawChar	f	(ch, pos): ASCII -> 7-segment code (font 0x0801affc) into the LCD shadow at digit pos (0..4 sub, 5..9 main); clears only the 7 glyph bits, so decimal points survive. high [video: draw glyph, confirmed]
+0801b130	Num_ToText	f	(dp): digits 0x20007db0..0x20007dc0 (from 0x0801b090) -> ASCII text 0x20007c30, leading zeros blanked up to the decimal point (dp 0: 4 digits, 1: 3, 2: 2, 3: 1, 4: none); dead > 0xff guards. high
+0801b874	__aeabi_ddiv	f	library (IAR/AEABI double divide): 6.0 / 0.6 -> 10. high (emulated)
+0801bb5c	log10	f	library: r2 = 1, tail-calls the Dinkumware-style log core 0x080204c4 (decimal flag); 1000 -> 3, 2 -> 0.30103. high (emulated)
+0801bb64	__aeabi_dmul	f	library (IAR/AEABI double multiply): 3.0 * 2.5 -> 7.5. high (emulated)
+0801caec	USART_Init	f	library (StdPeriph): CR2 STOP, CR1 M/PCE/PS/TE/RE (mask 0xE9F3), CR3 flow (0xFCFF), BRR from RCC_GetClocksFreq (PCLK2 for USART1 else PCLK1, OVER8 aware); only caller BLE_Start (USART2). high
+0801d37c	File_SetTimestamp	f	arg 1 = "cal.bin", 0 = current log name (0x20007ec8): f_close(0x20006a60), then up to 10 tries of f_utime (0802256e) with date/time from the clock-chip copy (0x200080d7.., year+20 = since 1980, seconds/2) and f_stat (08022526) read-back compare; 1 = stamped. Needed because get_fattime (0802402e) is a constant 0x3449B3C0 = 2006-02-09 22:30:00, which stays as the creation time. high (emulated)
+0801d640	Log_FindNextIndex	f	f_opendir(path "0:"), f_readdir loop over *.csv/*.CSV named YYMMDDNN: for names matching today's date (0x200080d7..d9) keeps max NN+1 in 0x20007ed0 (none = 0, >99 wraps to 0); skipped when 0x20007fae != 0; returns FRESULT. high (emulated)
+0801dbf0	Log_WriteDataRow	f	one CSV data row: number (0801e018), date 0x6E + time 0x6F, then MAIN / SUB-1 / SUB-2 groups (Func. 0801e048, value 0801e7fa or overload/sign fields 2/3/4, unit 0801e076; subs only for the modes that have them, else empty commas), Remark field 0x51/0x52/0x53 by flags 0x20007fe8/fe7/fe9, CRLF (kind 1); 0 ok, 1 write error. high (emulated)
+0801e076	Log_PutUnit	f	unit field of a CSV group: Log_FormatRow kind 0x33..0x3D+ chosen by mode (arg1) and range (arg2), some by a flag (0x20007fe5, 0x20007fea); 0 ok, 1 error. medium (emulated)
+0801e564	Log_WriteMaxMinRows	f	on log stop: "MAX" (kind 0x5B) and "MIN" (0x5C) rows: row index, Func., value or overload fields, unit, CRLF, mode/range unpacked from 0x20008027 / 0x20008028 (mode & 0x1F, range >> 5). high (emulated)
+0801f6b4	Log_VerifyWrite	f	read-back check after every write: f_open(log name, FA_READ), f_lseek to the pre-write size (0x20007edc), f_read in 512-B pieces and compare with the bytes just written (buffer 0x20001240, count 0x20007fda); 0 ok, 8 mismatch/error; f_close. On failure Log_Write rewinds the row counter. high (emulated)
+0801fb9c	__aeabi_dsub	f	library (IAR runtime): double a - b; if signs differ flips b's sign and branches into __aeabi_dadd (080131cc), else magnitude subtract with normalize/round. Disassembly checked (teq r1,r3; eormi; bmi 080131cc). high
+08020d58	get_fat	f	library (FatFs): FAT12/16/32 entry read via move_window; clst < 2 or >= n_fatent returns 1, disk error 0xFFFFFFFF; FAT32 masks 0x0FFFFFFF. high
+08020e3a	put_fat	f	library (FatFs): FAT12 nibble split, FAT16 word, FAT32 keeps top 4 bits; sets fs->wflag; FR_INT_ERR (2) on bad cluster. high
+08021180	dir_next	f	library (FatFs): advance DIR index; static root ends at n_rootdir, else next cluster via get_fat; stretch=1 extends with create_chain and zero-fills the new cluster (FR_DENIED 7 when full, FR_NO_FILE 4 at end). high
+08021400	create_name	f	library (FatFs): SFN-only (_USE_LFN 0) 8.3 builder, upper-cases, illegal-char table 08029164, DBCS lead/trail ranges 0x81-0x9F/0xE0-0xFC = code page 932 (ffconf default), 0xE5 -> 0x05, NS_BODY/NS_EXT case flags in byte 11, FR_INVALID_NAME 6. high
+0802172c	chk_mounted	f	library (FatFs R0.08a (EEVblog RE: byte-matched); became find_volume in R0.10): "N:" drive prefix, FR_INVALID_DRIVE 11 / FR_NOT_ENABLED 12 / FR_NOT_READY 3 / FR_WRITE_PROTECTED 10, check_fs at 0 then MBR partition 1 only, 512-B sector, FAT12/16/32 by cluster count (0xFF5/0xFFF5), FAT32 FSInfo read by disk_read directly (0x41615252 / 0x61417272 / 0xAA55); FATFS layout has no volbase. high (emulated)
+08021bcc	f_open	f	library (FatFs): chk_mounted + follow_path, create via dir_register (0802137e), FA_CREATE_ALWAYS truncates by remove_chain (08020f7c), DIR_CrtTime from get_fattime, FIL filled (no file lock / _FS_SHARE 0). high (emulated)
+08021d72	f_read	f	library (FatFs): validate, FA__ERROR (0x80) check, cluster walk with get_fat, multi-sector direct disk_read, dirty-buffer flush, partial sectors through fp->buf. high
+08021f60	f_write	f	library (FatFs): validate, FA__ERROR/FA_WRITE checks, create_chain on cluster boundary (stops on disk full), multi-sector direct disk_write, sets FA__WRITTEN (0x20) / FA__DIRTY (0x40), grows fsize. high (emulated)
+08022268	f_lseek	f	library (FatFs): no fast-seek; clips to fsize unless FA_WRITE, follows or extends (create_chain) the chain, reloads fp->buf sector. Log_VerifyWrite seeks back with it. high (emulated)
+08022942	SD_InitializeCards	f	ST sdio_sd.c: needs SDIO powered (else SD_REQUEST_NOT_APPLICABLE 0x25), CMD2 (CID to 0x20007c00..), CMD3 (RCA via SD_CmdResp6Error, stored 0x20007eec), CMD9 (CSD to 0x20007bf0..). high
+08022ae4	SD_GetCardInfo	f	ST sdio_sd.c: unpacks CSD/CID into SD_CardInfo at 0x20007698 (CardCapacity uint64 at +0x48, CardBlockSize +0x50, RCA +0x54, CardType +0x56); SDHC capacity (C_SIZE+1)*512 KiB. high
+080238f0	SDEnWideBus	f	ST sdio_sd.c static: card locked -> 0xE (SD_LOCK_UNLOCK_FAILED); SD_FindSCR; arg 1 needs SCR 4-bit support, ACMD6 arg 2; arg 0 needs 1-bit support, ACMD6 arg 0; caller SD_EnableWideBusOperation (08022ece) and SD_Init passes 1-bit. high
+# naming pass 2026-11-02, batch A (agent proposals, spot-checked)
+080067d6	Mode_ACI_Measure	f	AC current core (from Mode_ACI_OnAD1 and Mode_ACVA_OnAD1 I channel): on a new average (0x20008081): VA modes 13-15 -> 0800699a (Cal_Apply, clamp >= 0); else Cal_SubtractOffsetAC, clamp >= 0, Cal_DivideGain, ACFreq_Correct; cal mode: offset capture (0x2000808c -> 0x20007e08) / gain capture (0x2000808e); range 0 subtracts current-zero trim 0x20007e0c; Reading_StabilityFilterAC(20,10); cal-point capture 08007532; uA/mA/A range 0 below 31 counts -> 0; per sample 08008468 + ACFreq_Correct on g_reading_fast; SETUP page 10 sets 0x20008062. high
+08006d40	ACFreq_LpfCompensate	f	ACV/ACmV with g_lpf_1khz only: f = Freq_ToDeciHz(0x2000803e, 0x20007d84); f < 20 unchanged, f > 6000 -> reading 0; else reading * k / 10000, k interpolated in f over 216 points (freq 0x0802501c, 20..6000) and in amplitude between a low table 0x080256dc (reading < 100,000) and a high table 0x0802537c (> 500,000; linear between). k rises 1015 at f=20 to ~3815 at f=820, then falls to ~729 at 4000 (the x10 LPF scaling folded in). Index 0 reads the word before the table (harmless: ratio 1.0). medium
+080070cc	ACFreq_CorrectAcv0	f	(reading, freq count, freq range) -> correction counts to subtract; only ACV range 0 on g_variant_acv0 meters (EEPROM 0x1F != 0xA5), via ACFreq_Correct. reading >= 57000 or f <= 50 -> 0. Interpolates two curves in f (17 points 0x08028c58: 50..100000) from tables 0x08028648 / 0x0802868c (reading <= 5000: 0..first), then blends by a percentage of reading around (low curve + 5000) toward 50,000. Never executed. medium
+0800742c	ACFreq_Correct	f	(mode, reading) -> reading - AC frequency-response correction; only when current burden display 0x200080a5 off, not ACV/ACmV with 1 kHz LPF, not cal mode, and mode is ACmV/ACV/AC uA/mA/A. Table index: ACmV range (0-1), ACV range + 2 (2-5), 16/18/20 -> 6/7/8 (mode 0 -> 5 is dead code); 080075fa -> 080124f4 (freq tables + cal points 0x20007e4c..58; rejects index >= 8, so AC A gets none). Then ACFreq_CorrectAcv0 for ACV range 0 on variant meters. Result also kept in 0x20007e5c. medium
+08007b70	Ohm_R5Correction	f	Ohm range 5 linearity trim subtracted by Mode_Ohm_OnAD1 (only when g_variant_ohm6 == 0, not cal mode): triangular 0..15 counts, +1 per 1000 counts up to 15 at 15,000..35,999, back down to 1 at 49,999; >= 50,000 -> 0. high (emulated: emu_call)
+08007d1e	Ohm_R6Correction	f	(reading, trim 0x20007e14) -> counts subtracted on Ohm range 6 (g_variant_ohm6 == 0): table 0x08028868 (0,37,65,85,100,100,100,87,70,40,0,-37,-65) interpolated at 5,000-count steps (0x08028838), times trim / 100; reading >= 56,000 -> 0. Trim = EEPROM 0x178 (u32, +-3000 else 0), captured in cal as avg/gain - 30000 (0800f470). Reading 0 indexes the word before the table. high (emulated: emu_call 20000,100 -> 100; 55999 -> -42)
+08008344	Reading_StabilityFilterAC	f	(value, threshold, n): same algorithm as Reading_StabilityFilter (running mean of up to n, restart on a jump > threshold) with its own state: count 0x20008084, history 0x200070a8, mean 0x20007cd8, 64-bit sum / __aeabi_ldivmod. Used by the AC V/mV/I handlers with (20, 10). high
+080087f8	DCVA_CurrentSignTrim	f	(volts, amps) -> counts added to the DC VA current (from 08008138, modes 22/23/24): only not cal mode, g_pf8_strap_low == 0 and g_variant_ohm6 == 1; |amps| <= 2500 -> 0; else a constant per mode, range and sign quadrant of V and I (e.g. mode 22 range 0: +200 / -200 / -300; mode 22 ranges 0-1 +-2100). medium
+08008ed0	VA_VoltageCorrect	f	VA modes 13/14/15/24 (22/23 skipped; also skipped in cal mode, on current overrange 0x200080cb, or V > 60000): bilinear correction added to g_va_volts from the current bin (thresholds 0x0802896c per range group) and the voltage bin (0x08029094: 0,10,1000,5000,10000,30000,50000,60000), tables chosen by VA_SelectCorrTable; mode 24 range 2 allows negative V/I (sign-mixed flag); wrong jack for modes 13/22 (0x200080cc != 1, mA) or 15/24 (!= 2, A) forces current bin 8. Likely shunt/burden drop compensation. medium
+08009364	VA_SelectCorrTable	f	(current bin, voltage bin, sign-mixed) -> 0x20007eb8/ebc (row) and 0x20007ec0/ec4 (next row) from per-mode/range/PF8-strap tables 0x080260c0..0x080284c0 (8-word rows); modes 22/23 -> zeros. Mode 15 ranges 2/3 (strap high) use 7-word rows (0x080283a4, 0x080284a0), so voltage bin 7 reads the next row's first entry: possible table-layout bug, unverified. high
+0800a260	VA_VoltsAutorange	f	VA voltage channel: |V| >= 55,001 -> overrange flag 0x200080ca, and if not up yet set 0x200080c6 (+0x200080c8) and re-range; < 3200 while up -> down; g_range = 080148f6 (bit 0 = V high 0x200080c6, bit 1 = I high 0x200080c7), then 0800d8c2 reconfigures; not in cal mode or with 0x20008042/0x2000804e set. Stores V in 0x20007eac; SETUP page 10 flags 0x20008062. high
+0800a358	VA_AmpsAutorange	f	VA current channel: up above 55,000 (modes 15/24 already high: 11,000), down below 4000 (400); overrange flag 0x200080cb; same g_range recompute. Stores I in 0x20007eb0 (modes 13/22: /100 low, /10 high; raw kept in 0x20007eb4); SETUP page 11 flags 0x20008062. high
+0800aee8	Counter_ScaleToRange	f	(dest, range) from Counter_Frequency: 64-bit count 0x20007c40 rounded and divided by 10^range (adds 5/50/500/5000 into the count itself, __aeabi_uldivmod 08014028). dest 0 -> g_reading + g_range; 1 -> secondary frequency 0x20007d84/0x20007e60/0x20007e64 and range 0x2000803e/0x200080a0/0x200080a1. range 9 = overflow: sets 0x20008046 (main) / 0x20008047 (secondary), range 4, and stores the caller's leftover r7 as the value (uninitialized). high
+0800b33c	Mode_Cap_OnCounter	f	capacitance result on HY_OnCounter (mode 12): 0x20007e44 / 0x20007e40 (x100 on ranges 2-4); ranges 0-1: subtract g_cal_offset (floor 0) and divide by g_cal_gain unless 0, cal offset capture 0800f034 / gain 0800f6c0; ranges 2-5: gain only (capture 0800f470); Reading_StabilityFilter(threshold value/50, range 5 value/10, min 20; n 10); ranges 2-4 below 21 -> 0; range 4 can skip display updates by countdown 0x200080a4; then 0800ec28. high
+0800c332	BLE_ProcessRx	f	main loop: copies g_ble_rx (0x2000802f bytes) to 0x20007b94 and parses ASCII hex pairs (0800c470, upper case only). 0xF8: six bytes + XOR check -> BLE_SendReply, saved to 0x200080d7..dc and written to the RTC by 0801016c once (latch 0x20008033), bad check clears 0x20008034. 0xF4: key byte sent twice, must match -> reply, 0x2000806d key, 0x20008069 pending (Key_FromBLE). high
+0800c5da	BLE_BuildPacket	f	19-byte packet in g_ble_tx: 0xF2, 0800c53a header, mode (+0x80/+0x40 = bits 17/16 of |value|), range (+0x80 0x20008048, +0x40 negative, temp C/F +0x10/+0x20, diode 15 V -> 1), value low 16 bits; also appends the value to a 1000-entry ring 0x20003950 (index 0x20007fb0); sub-display fields by g_setup_page (0800c99e.. pages 0-12); status bytes (LPF, AC/DC, APO, BLE, battery); XOR of bytes 0-17 at byte 18. high [video] (RE_NOTES 0x0800C5DB, confirmed)
+0800cb44	BLE_SubDisplayPage10	f	BLE sub-display fields for SETUP page 10: ACmV/ACV -> frequency (0x20007d84/10, range 0x20008040, overflow 0x20008047, 0800ce78); continuity -> 0xAA + g_continuity_mode; diode -> unit 0x0B, value 3 or 15 (g_diode_15v); VA modes -> 0800cefc or 0800cfb0 (by 0x200080c2); current -> 0800ce32 with burden flag 0x200080a5; else blank (0800d0c8). medium
+0800ccc8	BLE_SubDisplayPage11	f	BLE sub-display fields for SETUP page 11: ACV -> code 0xB4 with signed value 0x20007e98 (from 08018590, float 0x20007e94 with decimal 0x20008040; maybe dBm, unconfirmed), +0x80 overflow 0x20008046, +0x40 negative; AC current burden off -> frequency (0800ce78); current burden on -> 0800d07c; VA modes -> 0800ce32 with g_va_burden_display; else blank. medium
+# IAR float/long helpers identified by the batch A agent (emu_call.py)
+08013090	__aeabi_fmul	f	IAR runtime float multiply (run with emu_call.py). library
+080132ec	__aeabi_fadd	f	IAR runtime float add (emulated). library
+08013370	__aeabi_f2iz	f	float to int, truncating (emulated). library
+08013fe4	__aeabi_ldivmod	f	64-bit signed divide (emulated). library
+# naming pass round 2, batches E and H (agent proposals, spot-checked)
+08006558	LowZ_AutoAcDc	f	LowZ auto AC/DC search (main, after each Display_Update in mode 0): |reading| <= 100 counts (30 once locked, 0x20008099) and not OL -> reading 0, unlock, and every 5 quiet displays (0x20000239) toggle DC/AC 0x20008098 + Mode_ApplyChange(0); larger or OL -> reset that counter (0800662c) and, if not locked, show 0 for 5 displays (0x2000023a) then lock. So the display reads 0 for 5 updates after a signal appears. medium
+08006774	Mode_ACI_SelectChannel	f	(burden) AC current TDM channel switch: 0 -> HY_SetMode/Cal_LoadRecord/Frontend_SetAll for g_mode/g_range; 1 -> the same for ACV range 0 (burden voltage); then Reading_SetSettleCount, clears 0x20007fc2. From Mode_ACI_OnAD1 and Setup_CurrentBurden. high
+08006c7a	ACFreq_ClearOnLowSignal	f	ACV/ACmV/AC current on a display update (not ACV/ACmV with 1 kHz LPF): reading below 1000 counts (ACV range 3: 100) -> no-signal counter 0x20007fc0 = 2000, so the next tick's 2000-tick timeout zeroes the sub-display frequency (0x20007d84/0x2000803e). medium
+08007532	Cal_AcFreqPointPoll	f	calibration mode, ACmV/ACV/AC current, burden display off: each pending AC frequency-point flag 0x2000809c..9f (set by Cal_AcFreqWindow) -> clear it, Cal_AcFreqPointStore(1..4, g_reading), Beep_Short. high
+080075fa	ACFreq_ComputeCorrection	f	(table index, reading) from ACFreq_Correct: picks the frequency source (ACV with AC+DC 0x200080ba: 0x20007e60/0x200080a0; LowZ in AC 0x20008098: 0x20007e64/0x200080a1; else the current 0x20007d84/0x2000803e) and returns AcFreq_Correction(reading, cal points 0x20007e4c..58, index, freq, freq range, g_variant_acv0). high
+080076bc	ACV_AfterReading	f	end of the ACV handler (also 08006a9e): with AC+DC (0x200080ba) the reading feeds ACDC_Step(0) while in the AC phase (0x200080bd == 0) instead of a display update, else g_display_update = 1; then ACV_ComputeDbm; SETUP page 11 -> refresh flag 0x20008062. high
+080078d8	Continuity_BeepDecide	f	(fast reading) from Mode_Continuity_OnAD1: g_continuity_mode 0/2 (DN 30/300) beep while reading < Continuity_Threshold, 1/3 (UP) while reading >= it; beep state 0x200080b5, tone via 0800eed0(100) each sample. high
+08007940	Continuity_Threshold	f	beep threshold with 500-count hysteresis by g_continuity_mode and beep state 0x200080b5: off 3000/3000/30000/30000; on 3500 (DN30), 2500 (UP30), 30500 (DN300), 29500 (UP300). high (emulated)
+080080c8	Mode_DCI_SelectChannel	f	(burden) DC current TDM channel switch: 0 -> HY_SetMode/Cal_LoadRecord/Frontend_SetAll for g_mode/g_range; 1 -> DCV range 0 (burden voltage); then Reading_SetSettleCount. From Mode_DCI_OnAD1 and Setup_CurrentBurden. high
+08008138	Mode_DCI_Measure	f	DC current core (Mode_DCI_OnAD1, Mode_DCVA_OnAD1 I channel): on a new average (0x20008081) Cal_Apply, Reading_StabilityFilter(10,10), + DCVA_CurrentSignTrim(g_va_volts, reading), range 0 minus current-zero trim 0x20007e0c, display update; Reading_FastPath; SETUP page 10 in current modes -> 0x20008062. high
+0800827c	HY_RmsRead	f	from HY_OnRMS: 32-bit value from the RMS registers (0x200077da..dd, byte 0x200077d9 kept in 0x20007dd8) -> 0x20007ddc, returns (int)sqrt(x) * 8 (to 0x20007d78); result unused (HY RMS discarded, modes.md). medium
+080082d4	HY_RmsAverage4	f	(value) from HY_OnRMS: sums 4 values (count 0x20008083, sum 0x20007de4); on the 4th stores the mean in 0x20007de8, resets, returns true. medium
+08008468	Reading_FastPathAC	f	(raw) per-sample fast AC reading: Cal_SubtractOffsetAC, Cal_DivideGain, /10 for ACV/ACmV with 1 kHz LPF -> g_reading_fast, flag 0x2000805e. high
+0800a4ac	VA_ComputePower	f	(volts, amps) -> g_reading = |V| * |I| / 100000 (uA and mA VA, and A VA range < 2) or / 10000 (A VA range >= 2), 64-bit divide; sign of the power is dropped. From Mode_DCVA_OnAD1 and Mode_ACVA_OnAD1. high (emulated)
+0800a560	VA_Reset	f	VA restart (Mode_ApplyChange, VA_ApplyRange): zero VA volts 0x20007eac / amps 0x20007eb0 and overrange flags 0x200080ca/cb, set the "-----" flags 0x200080bf..c1, display + LCD refresh, clears LCD shadow icon bits (08017fb4(0)). high
+0800a5bc	ACDC_Step	f	(dc phase) AC+DC mode sample counter 0x200080be: AC phase (0, from ACV_AfterReading) ends after 5 readings -> ACDC_PhaseEnd(1); DC phase (1, from Mode_DCV_OnAD1) after 3 -> ACDC_PhaseEnd(0). medium
+0800a608	ACDC_PhaseEnd	f	(1 = AC done, 0 = DC done): saves g_reading as AC 0x20007e9c (flag 0x200080bc) or DC 0x20007ea0 (0x200080bb), phase 0x200080bd = arg; on DC done ACDC_Combine, Reading_StabilityFilter(20,10), display update, fast = slow; then HY_SetMode/Cal_LoadRecord to switch the HY config. medium
+0800a6a8	ACDC_Combine	f	AC+DC total: g_reading = (int)sqrt(AC^2 + DC^2) from |0x20007e9c|, |0x20007ea0| (squares kept in 0x20007ea4/a8); either > 60,000 -> 100000 (OL). high (emulated)
+0800a74c	ACV_ComputeDbm	f	0x20007e94 (float) = 10*log10(V^2/0.6), dBm into 600 ohm; V = g_reading / 10000, 1000, 100, 10 for ranges 0..3 (range > 3 uses an uninitialized register). Shown by LCD_SubDbm. high (emulated)
+0800ab48	HY_CounterRead	f	from HY_OnCounter: three 24-bit counter values from the HY3131 read buffer (0x200077e5..ed) -> 0x20007e44, 0x20007e40, 0x20007e3c; gate length 0x20007e38 = 0x1000000 - preset 0x2000001c * 256, total 0x20007e48 = e38 + e3c; HY_CounterRearm. medium
+0800b244	Counter_PeriodToRange	f	(range) from Counter_PulseWidth: g_range = 0/1/2 and g_reading = 64-bit period 0x20007c48 / 1, 10, 100; 9 -> range 2 with OL flag 0x20008046. medium
+0800b610	Counter_ComputeFrequency	f	from Counter_Frequency: Hz gain capture (0x2000808e, mode 6) -> Counter_CalibrateClock first; then 64-bit 0x20007c40 = clock 0x20007e18 * count 0x20007e40 * 10 / (gate 0x20007e48 / 10). medium
+0800b67c	Counter_ComputePeriod	f	from Counter_PulseWidth: 64-bit 0x20007c48 = gate 0x20007e48 * 100000 / ((clock 0x20007e18 / 1000) * count 0x20007e40). medium
+0800b6f0	Counter_CalibrateClock	f	Hz gain calibration: clock 0x20007e18 = gate 0x20007e48 * 150,000,000 / (count 0x20007e40 * 100), i.e. scaled so the reference input reads 150,000,000 raw; Cal_StoreField(1). Clears 0x2000808e. medium
+0800b888	Burden_Average	f	(value) burden-voltage smoothing for AC/DC current (0x20007e6c): running mean of up to 3 (state 0x20007e70/74/78), restarted on a jump > 10 counts; returns the mean. Never executed. medium
+0800c470	BLE_HexPairToByte	f	(offset) two ASCII hex digits at 0x20007b94[offset..+1] -> byte; '0'-'9' and 'A'-'F' only (lower case or junk counts 0). From BLE_ProcessRx. high (emulated)
+0800c53a	BLE_PacketHeader	f	from BLE_BuildPacket: bytes 1..4 of g_ble_tx from g_date_stamp and g_meter_id as packed BCD digits (via 0801b090 digit split). medium
+0800c99e	BLE_SubTemperature	f	(offset) sub-display field: code 0x69 (g_temp_unit 0, deg F) or 0x64 (C), flags 1 (+0x80 if 0x200080ae, +0x40 negative), value 08018ad8(0x20007fcc) (0.1 deg rounded) as 16-bit magnitude (0800d100). high
+0800cac4	BLE_SubDate	f	(offset) sub-display field: code 0x87, flags 0, month 0x200080d8, day 0x200080d9. Never executed. medium
+0800cb04	BLE_SubTime	f	(offset) sub-display field: code 0x8C, flags 0, hour 0x200080da, minute 0x200080db. Never executed. medium
+0800ce78	BLE_SubFrequency	f	(offset, decimal, overflow, freq) sub-display frequency: code 6, flags decimal + 0x10 (+0x30 if freq range 0x2000803e > 1), +0x80 overflow, +0x40 negative; 16-bit magnitude. From BLE_SubDisplayPage10/11. high
+0800cefc	BLE_SubVaVolts	f	(offset, decimal, store) VA sub field for the voltage 0x20007eac: code 2 (AC VA 13-15) or 1 (DC VA 22-24), +0x80 if either VA overrange flag, +0x40 negative; store arg (always 0) would copy to 0x200048f0[0x20007fb0]. medium
+0800cfb0	BLE_SubVaAmps	f	(offset, decimal, store) VA sub field for the current 0x20007eb0: code = the current mode number (16/18/20 AC, 17/19/21 DC uA/mA/A) by VA mode, +0x80 overrange, +0x40 negative; store arg (always 0) -> 0x20005890[0x20007fb0]. Never executed. medium
+0800d07c	BLE_SubBurden	f	sub field at fixed offset 9: code 0x96, flags 1 (+0x40 negative), burden value 0x20007fca (LCD_SubBurden). Never executed. medium
+0800d5f4	Mode_SetFullScale	f	g_full_scale = table 0x08025a3c[mode][range] (7 per mode); diode: 30000, or 15000 with g_diode_15v. From Mode_ApplyChange and Setup_DiodeVoltage. high
+0800d664	VA_SubAlternate	f	every 10 ms in VA modes (13-15, 22-24): after 300 ticks (3 s) toggles 0x200080c2 and 0800d6e0 sets the sub-display decimal 0x20008040 for V or A (by range flags 0x200080c6/c7) and refreshes: the sub display alternates V / A every 3 s. medium
+0800d81e	Mode_ConfigureHyCal	f	(reload) HY_SetMode(g_mode, g_range); reload 1 -> Cal_LoadRecord, CurrentZero_Load, Cal_LoadRecord(6,0) too (counter clock cal) unless Hz, and for AC modes 2/4/16/18/20 and LowZ the AC frequency cal points (08011aa4). Via 0800d80c (+ Cap_SetTimeout). medium
+0800d8c2	VA_ApplyRange	f	VA re-range from VA_VoltsAutorange/VA_AmpsAutorange: flags 0x200080c3 = 1, 0x200080c5 = 0, TDM channel 0, 0800d80c(1) (HY + cal reload), VA_Reset, Frontend_SetCurrentB, Reading_SetSettleCount, 08017700/080171fa (LCD). Never executed. medium
+0800e2a0	Autorange_OhmNoHunt	f	(up) Autorange veto, Ohm (mode 9) autoranging, not cal: an up request records 0x20008035 = 1; a down request right after an up returns 1 (blocked) until Autorange clears 0x20008035 with the reading in range; other modes clear it. 0x20008036 = 100 is written but never read. medium
+0800e594	Rel_Apply	f	Display_Update REL step (REL on 0x20008058, not HOLD 0x2000804f, not OL): on arming (0x20008059) reference 0x20007da8 = g_reading, or the MIN/MAX value 0x20007d9c when MIN/MAX is on; g_reading -= reference. high
+0800ec28	Cap_SetTimeout	f	capacitance (mode 12): measurement timeout 0x20007fc4 in ticks by range (mostly 200, some 300, 150 for ranges 0-1 on PF8-strap-low meters, 300 with range lock 0x20008042), clears 0x20007fc6 and the timeout flag 0x200080a3 (set when the tick countdown ends). medium
+0800ef44	Cal_OffsetAccumulate	f	(sample) from Cal_Offset: offset capture over 0x20008095 = 16 samples (sum 0x20007e1c; Ohm r5 drops the first 8), then g_cal_offset = sum / 16 (Ohm r5 /8, r6 /4: 4x the mean, possible bug), Cal_StoreField(0), done 0x2000808d. high
+0800f034	Cal_CapOffsetCapture	f	(sample) from Mode_Cap_OnCounter: 64-bit sum (0x20007c38) over 16 samples, then mean -> 0x20007dfc and returned (to 0x20007d08), offset done 0x2000808d; returns 0 until then. medium
+0800f6c0	Cal_CapGainCapture	f	(sample, ref) from Mode_Cap_OnCounter, gain capture: 16-sample 64-bit mean; g_cal_offset = ref - (mean - ref)/9 (unsigned divide), Cal_StoreField(0); mode 12 gain = (0x20007e68 - offset)/10000 else Cal_ComputeGain; Cal_StoreField(1, (int)gain). Never executed. low
+0800fbe8	Frontend_SetAll	f	(mode, range) front-end switch state for a mode: Frontend_PwrCtl2On(mode, 0x20008098), SetSwitches, SetLedEnb, SetFre, SetVA, SetTemp, SetCurrentA/B; also clears g_diode_15v. high
+080100c4	RTC_PollSeconds	f	every 10 ms: RTC register 0x0E (seconds) changed -> new-second flag 0x200080d4 and toggles 0x200080e7 (1 Hz blink phase). medium
+0801016c	RTC_WriteClock	f	writes the clock copy to the RTC: registers 2/4/6/10/12/14 = 0x200080d7..dc (year, month, day, hour, minute, second) via 080101ac. From BLE_ProcessRx (0xF8 set-time) and Setup_Year/MonthDay/HourMinute. high
+08010204	RTC_ShiftOutNibble	f	(nibble) 4 bits LSB first to the RTC: data PB7, clock PB6 pulses with Delay_Loop(5); the register address (write: addr + 1). From 080101ac and RTC_ReadReg. high
+0801d79c	Log_MakePartName	f	rollover-part file name in 0x20007bd0 (name ptr 0x20007ec8): on part 1 shifts "YYMMDDNN" left two chars (drops YY), then writes part number 0x20007fae as the last two digits -> "MMDDNNPP.csv"; part counter bumped by 0801d51a when Log_WriteRetry's first 20 tries fail, so the next 20 go to this new file (no header: Log_Write sets the header flag only for part 0). medium
+0801d838	Log_MakeFileName	f	new log name "YYMMDDNN.csv" in 0x20007bd0 from the clock-chip date 0x200080d7..d9 and index arg (0x20007ed0 from Log_FindNextIndex); sets name ptr 0x20007ec8; lowercase ext, create_name upper-cases it on disk. high
+0801d8fc	Log_WritePendingRows	f	Log_Write body: new file (0x20008026) -> Log_WriteHeader; else one Log_WriteDataRow per pending record (count 0x20007d44, row number 0x20007d40++) with Log_TrackMaxMin after each; on error rewinds row number to 0x20007d48 and sets 0x200080f6; full ring (60) bumps 0x20007d34; clears shadow index 0x20007fda. high
+0801d9ac	Log_TrackMaxMin	f	after each row: row 1 seeds MAX (0801db34) and MIN (0801db64); later rows call Log_CheckMax / Log_CheckMin unless the stored extreme is already +OL (max) / -OL (min); record flags bit7 = OL, bit6 = negative. high
+0801da40	Log_CheckMax	f	replaces MAX (0x20007d4c, flags 0x20008029) when the current value 0x20007d1c is larger; sign-magnitude compared via ~value when bit6 set; skips any OL sample, so +OL never becomes MAX after row 1. medium
+0801dab2	Log_CheckMin	f	replaces MIN (0x20007d50, flags 0x2000802a) when the current value is smaller; skips +OL samples but compares -OL samples by their raw value (asymmetric with Log_CheckMax). medium
+0801e330	Log_WriteHeader	f	new-file header: file pointer (0801e010) to 0x20007edc/ee0 for the read-back check, then START, ID, INTERVAL, group-title and column-title lines; first error returns 1. Straight-line in the disassembly (the decompile's do/while is an artifact). high
+0801e3d8	Log_PutGroupTitles	f	header line ",,,MAIN,,,SUB-1,,,SUB-2,,,Remark," (Log_FormatRow kinds 0x0B..0x0E) + CRLF (kind 1); 0 ok, 1 error. high
+0801e43c	Log_PutColumnTitles	f	header line "No. ,Date ,Time ," (kinds 0x0F, 0x13, 0x14) + 3x "Func. ,Value,Unit," (0x10..0x12) + CRLF; 0 ok, 1 error. high
+0801e4d2	Log_PutIdLine	f	header line "ID,<EEPROM YYMM + meter ID>," (kinds 6, 0x68) + CRLF. high
+0801e512	Log_PutStartLine	f	header line "START,<date>,<time>," (kinds 5, 0x66, 0x67) + CRLF. high
+0801e7a8	Log_PutIntervalLine	f	header line "INTERVAL,<sec>,sec," (kinds 7, 0x65, 8) + CRLF. high
+0801f4b8	Log_PutTime	f	formats "HH:MM:SS," from three bytes (strlen 08023ca0) and writes it via Log_PutBytes; callers pass start time 0x20007ffe.. or row time 0x2000800a..; 0 ok, 1 error. high
+0801f558	Log_PutDate	f	formats "20YY/MM/DD," from three bytes and writes it via Log_PutBytes; callers pass 0x20007ffb.. or row date 0x20008007..; 0 ok, 1 error. high
+0801f604	Log_PutBytes	f	the CSV sink: copies n bytes into the read-back shadow 0x20001240[0x20007fda++] (u16 index, no bounds check), f_write to the log FIL 0x20006a60, adds n to 0x20007ee4; 1 on error or short write; byte loop counter, so n > 255 would never end (all callers short). high
+0801f7e0	Log_FormatDigits	f	value to 6 decimal digits right-to-left ending at 0x20007c56 (0x20007c50..), inserting '.' at position arg2 from the right (0 = none, the point does not count as a digit); used by Log_FormatRow. high
+080209fc	RTC_GetITStatus	f	StdPeriph: enabled (CR / TAFCR tamper) && pending (ISR); RTC_WKUP_IRQHandler asks for RTC_IT_WUT 0x4000. library
+08020a74	SYSCFG_EXTILineConfig	f	StdPeriph: EXTICRx nibble = port source; Wake_ArmRotary path uses port 7 = GPIOG (rotary on PG, STM32L152ZD). library
+08020ac8	EXTI_Init	f	StdPeriph: {Line, Mode +4, Trigger +5 (0x10 = both), LineCmd +6}; rotary wake uses 0x0C falling. library
+08020bee	move_window	f	library (FatFs): flush dirty win (wflag) with disk_write, mirror into the other FATs (n_fats) when in the FAT area, then disk_read the new sector into fs->win (+0x30); 1 = FR_DISK_ERR. high
+08020c66	sync	f	library (FatFs R0.08a "sync", later sync_fs): move_window(0) flush; FAT32 with fsi_flag: rebuilds FSInfo (RRaA/rrAa, free_clust, last_clust, 0xAA55) and writes it; then disk_ioctl CTRL_SYNC. high
+08020f7c	remove_chain	f	library (FatFs): frees a cluster chain with put_fat(0), free_clust++ and fsi_flag when known; FR_INT_ERR 2 on bad cluster / broken chain; called by f_open FA_CREATE_ALWAYS. high
+08020fee	create_chain	f	library (FatFs): clst 0 = new chain from last_clust hint, else stretch; scans for a free entry, marks 0x0FFFFFFF and links; returns new cluster, 0 disk full, 1 internal error, 0xFFFFFFFF disk error; updates last_clust/free_clust. high
+080210ca	dir_sdi	f	library (FatFs R0.08a; later dir_seek): set DIR index, static root (FAT12/16) bounded by n_rootdir, else walk the chain 16 entries/sector x csize; fills clust/sect/dir pointer. high
+080212b2	dir_find	f	library (FatFs, SFN only): dir_sdi(0), move_window per entry, compare 11-byte name (mem_cmp) on non-volume-label entries; 4 = FR_NO_FILE at end. high
+0802131a	dir_read	f	library (FatFs, SFN, _FS_RPATH 0): next live entry, skipping 0xE5, "." entries and volume labels; 4 at end, clears dj->sect. high
+0802137e	dir_register	f	library (FatFs, SFN): finds a free (0x00/0xE5) slot, stretching the directory via dir_next(1), clears 32 bytes, copies the 11-byte name, sets wflag. high
+0802156e	get_fileinfo	f	library (FatFs): FILINFO from the current entry: "NAME.EXT" (0x05 -> 0xE5), attr, fsize, fdate (+0x18), ftime (+0x16); empty name when dj->sect 0. high
+08021612	follow_path	f	library (FatFs): skips leading '/' or '\', create_name + dir_find per segment, descends into directories (sclust from 0x14/0x1A); 5 = FR_NO_PATH; empty path = root (dj->dir NULL). high
+080216b2	check_fs	f	library (FatFs): reads the sector, 0xAA55 at 510 else 2, "FAT" at 0x36 (FAT12/16) or 0x52 (FAT32) = 0, else 1; 3 on disk error; called twice by chk_mounted (sector 0, then the MBR partition). high
+08022188	f_sync	f	library (FatFs): validate, if FA__WRITTEN: flush FA__DIRTY buffer, update entry (AM_ARC, fsize, sclust lo/hi, write time = get_fattime constant 2006-02-09), clear flag, sync. Called by f_close (0802224c). high
+0802242c	f_opendir	f	library (FatFs): chk_mounted, follow_path, must be a directory (else FR_NO_PATH 5), id from fs, dir_sdi(0); Log_FindNextIndex opens "0:". high
+080224b6	f_readdir	f	library (FatFs): validate; NULL fno rewinds, else dir_read + get_fileinfo + dir_next; end of dir gives an empty name with FR_OK. high
+08022526	f_stat	f	library (FatFs): chk_mounted, follow_path, get_fileinfo; root gives FR_INVALID_NAME 6; File_SetTimestamp uses it before f_utime. high
+0802256e	f_utime	f	library (FatFs, _USE_CHMOD): writes fno->ftime/fdate into DIR_WrtTime (0x16) / DIR_WrtDate (0x18), wflag, sync; called by File_SetTimestamp. high
+080225d8	SD_Init	f	ST sdio_sd.c: SD_LowLevel_Init, SDIO_DeInit (08024074), SD_PowerON, SD_InitializeCards, SDIO_Init ClockDiv 0 (bypass off), SD_GetCardInfo, SD_SelectDeselect (08022f96, RCA << 16), SD_EnableWideBusOperation(1-bit). Called by disk_initialize (08023f5c) and the SD re-init path. high
+08022ece	SD_EnableWideBusOperation	f	ST sdio_sd.c: MMC (CardType 3) and 8-bit give 0x27 SD_UNSUPPORTED_FEATURE; 0x800 = 4-bit via SDEnWideBus(1); else 1-bit; re-runs SDIO_Init with the bus width. Called with 0 (1-bit board). high
+08023476	SD_ProcessIRQSrc	f	ST sdio_sd.c: from SDIO_IRQHandler; DATAEND -> TransferError 0 (0x200080f7) + TransferEnd 0x20007ef4; DCRCFAIL 2, DTIMEOUT 4, RXOVERR 6, TXUNDERR 5, STBITERR 7; then masks the SDIO interrupts (0xC33A). high
+08023cd8	SD_LowLevel_DeInit	f	ST sdio_sd.c (board part): SDIO clock off, power off, SDIO_DeInit, SDIO APB2 clock off, PC8/PC12/PD2 back to AF0 and input mode. high
+08023d56	SD_LowLevel_Init	f	ST sdio_sd.c (board part): GPIOC/D clocks, PC8 (D0) / PD2 (CMD) / PC12 (CLK) AF12, 40 MHz, pull-up on D0/CMD only; SDIO (APB2 0x800) and DMA2 (AHB) clocks on. high
+08023ee8	_Dnorm	f	library (IAR Dinkumware): normalizes a subnormal double in place (shift mantissa until bit 52, keep sign), returns 1 - shift count; zero returns 1; log10 calls it when the exponent field is 0. medium
+08023fb8	disk_write	f	diskio glue: one sector at a time, each SD_WriteMultiBlocks(1 block, CMD25) + SD_WaitWriteOperation (results ignored), then polls 0802268a for transfer state 20000 times (timeout -> 2 = RES_WRPRT, not RES_ERROR); byte address = sector << 9 in 32 bits, high word 0, so sectors past 4 GiB wrap. high
+0802494c	EXTI9_5_IRQHandler	f	vector name kept: only clears pending EXTI lines 5..9 (rotary wake from STOP; no other work). high
+080249a8	EXTI15_10_IRQHandler	f	vector name kept: only clears pending EXTI lines 10..15 (rotary wake from STOP; no other work). high
+# naming pass round 2, batches F and G (agent proposals, spot-checked)
+08010254	RTC_ReadByte	f	bit-banged RTC chip read: PB7 (data) to input (08010378), 8 clocks on PB6 (high, sample PB7, low), LSB first, PB7 back to output (0801033c); returns the byte. Used by RTC_ReadReg. high
+080102b8	RTC_WriteByte	f	bit-banged RTC chip write: 8 bits LSB first, PB6 clock low, data on PB7, clock high (data latched on the rising edge). Used by the register write 080101ac. high
+080103d8	Date_DaysInMonth	f	(year 0..255 = 2000+y, month 1..12) -> days (31,28/29,31,30,...); Gregorian leap rule (/4, not /100, /400); month 0 reads an uninitialized stack byte. Setup_MonthDay and day clamp 080103a8. high (emulated: 2024/2 29, 2023/2 28, 2100/2 28, 2025/4 30)
+08010b64	Log_StoreSample	f	main, when logging (0x20007fe1) and a sample is due (0x20007fe2, cleared): stores the current record into ring slot 0x20007fa4 (Record_Store; slot reset to 0 when > 59), slot++; after 60 rows sets 0x2000801c (main writes them to SD) and 0x20007d44 = 60; total count 0x20007d38++ (shown on sub page 100); sub redraw 0x20008062. high
+08010be8	Log_RestoreCounters	f	App_StateInit: ring slot 0x20007fa4 and total count 0x20007d38 from the copies Log_Stop saved (0x20007fac/0x20007d3c, 08010bca); both zeroed unless slot < 61 and count < 600000 (garbage guard); then Log_ViewInit. high
+08010c34	Log_ViewInit	f	recall-view window over the 60-row ring: total 0x20007d38 <= 60 -> first 0x20007fa0 = 1, rows 0x20007f9e = slot; else first = slot + 1, rows = 60; newest 0x20007fa2 = slot 0x20007fa4; view position 0x20007f9c = 1. From Log_Stop and Log_RestoreCounters. high
+08010c8c	LogView_PosToSlot	f	(view position n, 1-based) -> ring slot number (1-based) first 0x20007fa0 + n - 1, wrapped once by the row count 0x20007f9e; LogView_Show passes slot-1 to Record_Load. Never executed. high
+08010cfc	Log_SaveStartTime	f	Log_Start: RTC date/time 0x200080d7..dc copied to the start-time fields 0x20007ffb..0x20008000 and their backup 0x2000800f..14. high
+08010d92	Log_RestoreStartTime	f	start-time fields 0x20007ffb..0x20008000 from the backup 0x2000800f..14; on entering the recall view (Key_ShortPress). Never executed. high
+08010de0	Log_SaveStopTime	f	Log_Stop: RTC date/time 0x200080d7..dc copied to the stop-time fields 0x20008001..06 and their backup 0x20008015..1a. high
+08010e98	Log_RestoreStopTime	f	stop-time fields 0x20008001..06 from the backup 0x20008015..1a; on entering the recall view. Never executed. high
+08011154	Mode_SaveForPosition	f	Mode_Cycle: writes g_mode as the remembered mode of its dial position via 08011118 to EEPROM 0x08 (DCV/ACV; 0x82 when AC+DC 0x200080ba), 0x09 (mV/temp), 0x0A (Hz/pulse/duty), 0x0B (Ohm/cont/diode/cap), 0x0C (VA 14/15/23/24: 0x18 if 23/24 else 0x0F), 0x0D (uA 13/16/17/22), 0x0E (mA/A 18..21). high
+08011950	Cal_LoadVaRecord	f	from Cal_LoadRecord (VA modes): record T[g_mode]+16*g_range: V offset +0 -> 0x20007e24, V gain +4 / 1e6 -> 0x20007e2c, I offset +8 -> 0x20007e28, I gain +12 / 1e6 -> 0x20007e30 (gains as unsigned u32 -> float). high
+080119f4	Cal_ClampAcFreqPoint	f	(point 0..3) AC freq-response cal values: points 0/1 (0x20007e4c/50) outside +-20000 and 2/3 (0x20007e54/58) outside +-10000 reset to 0. high
+08011aa4	Cal_LoadAcFreqPoints	f	from 0800d81e on a mode load (AC uA/mA/A 16/18/20, ACmV 4, ACV 2, LowZ 0 using the ACV range 3 record): four s16 at T[mode]+8+16*range (AC uA/mA forced to range 1) -> 0x20007e4c/50/54/58, each clamped by Cal_ClampAcFreqPoint. high
+08011dce	Cal_StoreVaField	f	Cal_StoreField for VA modes: field 0 writes both offsets (0x20007e24 -> +0, 0x20007e28 -> +8), field 1 both gains x 1e6 (0x20007e2c -> +4, 0x20007e30 -> +12) of record T[g_mode]+16*g_range; other fields ignored. high
+08011e88	Cal_StoreAcFreqPoints	f	(mode, range, which): clamps and writes AC freq-response point 1..4 (0x20007e4c/50/54/58) as s16 at T[mode]+8+16*range (+0/+2/+4/+6); which = 100 writes all four. From Cal_AcFreqPointStore and Cal_AcFreqClear. high
+08011f38	Cal_AcFreqClear	f	from Cal_AcFreqWindow: clears the four point-captured flags 0x2000809c..f and the four values 0x20007e4c..58, then writes all four zeros to EEPROM (Cal_StoreAcFreqPoints(.., 100)). high
+0801217c	Record_Store	f	(slot) stores the current record into the 60-slot RAM ring: date/time 0x200080d7..dc, main code/flags 0x20007fee/ef + value 0x20007d28, sub code/flags 0x20007ff0/f1 + 0x20007d2c, third 0x20007ff2/f3 + 0x20007d30 (column arrays 0x20007810..0x20007aa4, u32 arrays 0x200073c8/74b8/75a8); inverse of Record_Load. high
+0801368a	TrimmedMean20_Sort	f	TrimmedMean20 helper: copies the 20 samples 0x200076f0 to 0x20007740 and selection-sorts them descending in place (repeated max, zeroing the picked entry; unsigned compare). high
+08013aac	Thermistor_AdcToTemp	f	Thermistor_Process: internal thermistor ADC count -> temperature in 0.01 degC by table 0x08028dd0 (5 degC steps, linear interpolation): 0x206 -> 85.00, 0xE58 -> -25.00 (count falls as temp rises); outside -> 0 with error flag 0x200080af = 1. high (emulated)
+08013b76	Temp_CToF	f	(0.01 degC, negatives as ones' complement ~x) -> 0.01 degF: x * 1.8 + 3200, rounded, same sign encoding; also result in 0x20007e88. Mode_Temp_OnAD1 (deg F setting) and 08018ad8 (sub temperature). high (emulated: 2500 -> 7700, 0 -> 3200, -10.01 -> 1398)
+08013c40	TC_EmfToTemp	f	Mode_Temp_OnAD1: K thermocouple EMF in uV (reading + cold-junction EMF) -> 0x20007e80 in 0.01 degC by the K table 0x08025cf8 (10 degC steps, linear interpolation); valid -5891..54138 uV = -200..1350 degC; below -> 0, flag 0x200080ad = 2; above -> 0, flag 1. high (emulated: 41276 -> 100000, -5891 -> -20000)
+08013cf8	TC_ColdJunctionEmf	f	(negative, |temp| in 0.1 degC) from Thermistor_Process: cold-junction temperature -> K EMF uV in 0x20007e7c by the same table (0 degC = index 21); valid 0..100.0 degC or down to -20.0 degC; out of range leaves 0x20007e7c unchanged (stale). high (emulated: 25.0 -> 998, -10.0 -> -392)
+0801472c	Mode_AcDcOn	f	AC+DC on (0x200080ba = 1) for ACV: 1 kHz LPF off and clears 0x20007e60, 0x200080a0, 0x200080bb..be, 0x20007e9c/ea0 (related submode state); from the AC+DC toggle 08014708 and the dial-position loader 08010ff0 (EEPROM 0x08 = 0x82). medium
+08014796	Key_RangeShort	f	RANGE short press: HOLD/auto-hold on -> double beep; mode with < 2 ranges (0x20000000[mode]) -> double beep; first press in auto range only sets manual (0x20008042) and draws the icon (range unchanged), later presses (or any press in cal mode) step g_range cyclically, 0x2000804b = 1, VA_SetRangeFlags; short beep. high
+0801485a	VA_SetRangeFlags	f	(mode, range) VA modes 13/14/15/22/23/24 only: range bit 0 -> V high 0x200080c6, bit 1 -> I high 0x200080c7 (value 2 instead of 1 for the A-range VA modes 15/24); from Key_RangeShort and Key_LongPress (range 0). high
+080148f6	VA_RangeFromFlags	f	inverse of VA_SetRangeFlags: g_range = (V high 0x200080c6 ? 1 : 0) + (I high 0x200080c7 ? 2 : 0); from VA_VoltsAutorange / VA_AmpsAutorange. Never executed. high
+0801496e	Rotary_Debounce	f	10 ms tick (via 08014948): Rotary_Read; a position must read the same 5 times in a row (0x2000023c, count 0x200080ec), be one-hot (08016b7c), differ from the current 0x20008065, and the 15-tick lockout 0x200080eb be over; then 0x20008065 = it and the dial-change flag 0x20008064 = 1. high
+080157e8	Cal_CaptureBlocks	f	Cal_ArmCapture: number of capture blocks (shown as nn in the -O-nn/-G-nn prompts, 0x20008095): 4 for VA modes and Ohm range 6, else 16. high
+0801584c	Hold_SetAutoHold	f	(on, from_log): HOLD 0x2000804f off, auto-hold 0x20008050 = on (saves g_range to 0x20008056, clears 0x20008055); resets 0x20008052, 0x20007fb2, sets 0x20008051/53 = on; from_log (Log_Toggle passes the logging flag) also turns MIN/MAX off and redraws the manual/hold icons. HOLD key second press (Key_ShortPress) uses (1, 0). Never executed. medium
+080158d4	MinMax_KeyShort	f	MIN/MAX short press: off -> init (08015974), manual flag saved to 0x20008044 and forced on (range locked), icon; on -> state 0x2000804e cycles 1..4 (MAX, MIN, AVG, live); then 08015934 (shows the selected value), icons, LCD_DrawMinMaxIcons(flush). high
+08016a64	Keys_AutoRepeat	f	(held) from Keys_Scan for the up/down keys (0x40/0x80) in the recall view or SETUP edit: 0 resets; first repeat after 50 ticks (3 in the recall view 0x20007fe4), then 5 repeats every 30 ticks, then every 10 ticks; each repeat queues a short press (0x20008067, code 0x2000806b = held key). high
+08016d34	LCD_RefreshDirty	f	main loop (not in the recall view): redraws the parts flagged dirty: 0x2000805e (08018b14), main (g_display_update/0x2000805f, LCD_DrawMain), icons + units (0x20008060), unit prefix (0x20008061), units (0x2000804c), sub units on a SETUP page change or 0x20008063, sub (0x20008062, LCD_DrawSub); LCD_Flush when 0x2000805b. high
+080170ac	LogView_Show	f	(view position) recall view: position number on the sub (LCD_DrawSubValue), Record_Load(LogView_PosToSlot - 1), main value 0x20007d1c with the record's mode/decimals, or the OL text (080199b4) for 0x7FFFFFFF; LCD_Flush. From Key_ShortPress (enter, next, previous). Never executed. high
+08017100	LCD_DrawMainValue	f	(mode, decimals, value, honor_hold): unless honor_hold and HOLD 0x2000804f is on: decimal point (LCD_SetMainDP), minus sign (0x2000779c bit 7), |value| to text (0801b090, Num_ToText) drawn on the main digits (08019ae0(0, 0x20007c30)), dirty flag 0x2000805b; last shown value kept in 0x20007d70 (HOLD captures it). high
+0801717e	LCD_SetMainDP	f	(decimals 0..4) main display decimal point: clears all, then 1 -> 0x20007790 bit 14, 2 -> 0x20007794 bit 1, 3 -> bit 3, 4 -> bit 5 (V-x.xx boot text uses 2; SAvEd/Err 0). high
+0801725e	LCD_DrawIcons	f	redraws every annunciator group (13 icon routines: manual, hold, MIN/MAX, AC/DC, ...) without flushing; from 08017222 (mode change) and LogView_DrawStatic. medium
+0801772e	LogView_DrawStatic	f	entering the recall view: decimals 0x20007fed from Display_DecimalPlaces(view mode/range 0x20007feb/fec), LCD_DrawIcons, units of the record's mode (flags 0x20007fe5/e6), 08019364, LCD_Flush. Never executed. high
+080177ac	LCD_DrawCapUnits	f	capacitance unit prefix by range: range < 2 -> 0x20007798 bit 9 (likely n), else 0x20007790 bit 9 (likely u); always F (0x200077a0 bit 9). From LCD_DrawUnits and the prefix redraw 0801776e. medium
+080177f2	LCD_DrawOhmUnits	f	resistance unit prefix by range: 0-1 none, 2-4 k (0x20007790 bit 8), 5+ M (bit 11); always OHM (0x20007798 bit 8). medium
+08017858	LCD_DrawHzUnits	f	frequency unit prefix by range: 0-1 none, 2-4 k (0x20007790 bit 8), 5+ M (bit 11); always Hz (0x200077a0 bit 8). medium
+08017f28	LCD_DrawSubValue	f	(value, decimals, flush): sub display number: minus sign 0x200077a0 bit 29, LCD_SetSubDP, |value| to text drawn on the sub digits (08019ae0(1, ..)); flush now or set dirty 0x2000805b. Recall position, log count, many SETUP pages. high
+08017fb4	LCD_SetSubDP	f	(decimals 0..4) sub display decimal point in 0x20007790: clears bits 21/23/25/27, then 1 -> bit 21, 2 -> 23, 3 -> 25, 4 -> 27. high
+0801803c	VA_SubDecimalsAmps	f	VA sub display, current half: decimals 0x20008040 = 4 for modes 13/22, 4 or 3 (I high 0x200080c7) for 14/23, 2 or 3 for 15/24 (sibling 0801801e is the V half: 4 / 3 by 0x200080c6). medium
+080180aa	LCD_SetSubFreqDP	f	Hz sub page (from 08017f94): decimals 0x20008040 by the frequency range 0x2000803e (08018102) for AC modes 2/4/16/18/20, else 0; LCD_SetSubDP. high
+0801813a	LCD_SubEditBlink	f	blink-off phase while editing a SETUP page (0x2000806e set, 0x2000806f clear): blanks the field being edited: pages 6/7 two spaces at digit 0 or 3 (by 0x200080d6), page 8 meter ID one digit (4 - 0x20008071), else the whole sub; sub minus sign and DP off. high
+080181b6	LCD_DrawSubVa	f	(value) VA sub display (V 0x20007eac or I 0x20007eb0): LCD_SetSubDP(0x20008040), |value| to text on the sub, minus sign bit 29 after drawing; dirty 0x2000805b. high
+08018356	LCD_SubBurdnLabel	f	sub display "burdn" (no DP), sets 0x2000805b (LCD dirty); LCD_SubBurden shows it instead of the value while countdown 0x200080aa (100, set on entering the burden page) runs. high
+0801839a	LCD_SubBattery	f	(dV) SETUP page 1: "BAT" + 2 digits of g_battery_dV clamped to 99, sub DP 1 -> "BAT4.2"; 0x20008040 = 1; via Num digits 0x0801b090. high
+08018410	LCD_SubContrast	f	(contrast 10..17) SETUP page 4: "Lcd-n" with n = contrast - 10 (char contrast + '&'). high
+080184d4	LCD_SubLogInterval	f	(n) SETUP page 9: "In" + 3-digit right-justified number, leading blanks; live g_log_interval or edit copy 0x20007fa6. high
+0801871c	LCD_SubContinuity	f	(g_continuity_mode) continuity page text: 0 "DN 30", 1 "UP 30", 2 "DN300", 3 "UP300"; clears sub minus. high
+080187d8	LCD_SubMonthDay	f	(flush, month, day) SETUP page 6: "MM-DD" from 0x200080d8/d9 (live) or 0x200080de/df (edit); arg 1 -> LCD_Flush else dirty flag. high
+080188a0	LCD_SubHourMinute	f	(flush, hour, minute) SETUP page 7: "HH-MM", separator '-' or ' ' by blink phase 0x200080d5 (toggled in main); 0x200080da/db live, 0x200080e0/e1 edit (0x0801896c picks). high
+08018a00	LCD_SubTemperature	f	(temp) SETUP page 0: converted temp (0x08018ad8) x10, Num_ToText(2), '-' placed, last char 'F' (g_temp_unit 0) or 'c' -> " 25.3c"; " OPEN" when 0x200080ae (only ever cleared: dead). high
+08018f14	Bar_DrawForMode	f	Bar_Draw(scale) per g_mode: 1 for LowZ, V/mV modes 1-4 on range 3, A modes 20/21 on range 2; 0 for the other ranged modes; nothing for temp, Hz/pulse/duty, cap. medium
+08019268	Bar_RangeLabel	f	(n) bargraph range label segments COM3 SEG7 + COM1 SEG11: 0 both off, 1 first, 2 both; state 0x2000804d; n >= 3 leaves them. medium
+080192fc	Bar_Reset	f	redraw path (0x08017222): ranged modes -> g_reading_fast = 0, bar count 0x20008041 = 0, Bar_DrawForMode, clear segments 25..1; Hz/pulse/duty/temp/cap -> Bar_Off. high
+08019364	Bar_Off	f	clears every bargraph segment incl. bar0, +/- signs, scale marks and range labels (Bar_ClearRange(25,0)); also used by the memory-recall view. high
+08019698	LCD_CalPrompt	f	(kind) main "-X-nn" calibration prompt, X = O/G/4/5/3 for 0..4, nn = step 0x20008095; BUG: units digit = nn - 10 (not nn % 10), so nn >= 20 garbles. high
+08019738	LCD_CalEndText	f	(kind) main calibration end text: 0 "OFF-E", 1 "G-END", 2 "400-E", 3 "5KEND"; clears main minus. high
+080198b0	LCD_SubLoBat	f	sub "LoBAt" when log error 0x2000801b = 0x14 (Log_Start refused on low battery 0x2000803b). high
+080198fc	LCD_SubSdEnd	f	sub "SdEnd" when 0x2000801d (logging ended by the 599999 limit in Log_Write). high
+08019948	LCD_SubSdError	f	(code) sub "SdEnn", code 0x2000801b from Log_WriteRetry; same nn - 10 bug: right only for 0..19; low battery stop sets 100 -> "SdE" + two blanks. high
+080199b4	LCD_ShowOFL	f	(line 0 main / 1 sub) " OFL"; main shows " LEAD" instead when 0x20008076, main minus from 0x20008045 (negative OL), sub minus cleared. high
+08019a22	LCD_ShowOpen	f	(line) " OPEN", minus cleared, " LEAD" override on main; only caller LCD_SubTemperature (dead branch). high
+08019a98	LCD_ShowBlank	f	(line) five blanks, clears negative-OL flag 0x20008045 and that line's minus. high
+08019c5c	LCD_DrawApoIcon	f	(flush) APO icon (COM2 SEG39) on when APO active (g_apo_off == 0), not logging, no MIN/MAX; untouched in the last 60 s (0x200080e6, blink owner). high [video: sub_8019c5d, confirmed]
+08019da2	Range_IsAuto	f	1 = AUTO range: not cal mode, not logging without auto-hold, mode not LowZ/temp/duty/cont/diode, manual flag 0x20008042 clear; used by the AUTO icon (0x08019d68) and BLE_BuildPacket. high
+08019f2e	LCD_DrawRelIcon	f	(flush) REL icon (COM0 SEG0) from 0x20008058, off while logging or in recall view (0x20007fe4). high [video: sub_8019f2f, confirmed]
+08019fa2	LCD_DrawHoldIcon	f	(flush) Hold_State 1 -> "A-" + HOLD, 2 -> HOLD, 0 -> neither (COM1/COM2 SEG16). high [video: sub_8019fa3, confirmed]
+0801a028	Hold_State	f	0 none (also recall view, or logging without auto-hold), 2 HOLD (0x2000804f), 1 auto-hold (0x20008050); also BLE_BuildPacket status. high
+0801a07c	LCD_DrawPeakIcon	f	(flush) "1ms" PEAK icon (COM3 SEG0+16) from 0x200080b7, or recorded flag 0x20007fe8 in recall view. high [video: sub_801a07d, confirmed]
+0801a110	LCD_DrawLpfIcon	f	1kHz LPF icon (COM1 SEG31) from g_lpf_1khz, or recorded flag 0x20007fe7 in recall view. high [video: sub_801a111, confirmed]
+0801a32a	LCD_DrawMemIcon	f	(flush) MEM icon (COM0 SEG16) when logging with 0x20007fe3 or in recall view 0x20007fe4; Log_Start/Stop/Write callers. high [video: sub_801a32b, confirmed]
+0801a3a4	LCD_DrawTempUnitIcon	f	temp unit icon in mode 5 only: g_temp_unit 0 -> COM3 SEG11, else COM2 SEG11; both off in other modes. high [video: sub_801a3a5, confirmed]
+0801a6d8	LCD_SubVaAmpsUnit	f	VA current on the sub: COM1 SEG18 (sub A) always, plus COM0 SEG18 (sub m) in modes 13/14/22/23, or 15/24 when 0x200080c7 == 0. medium (segment meaning from LCD_DrawSubUnits use)
+0801a760	LCD_ClearSubUnits	f	clears sub unit segments COM0 SEG18/19, COM1..3 SEG17/18/29 and the sub minus; from LCD_DrawSubUnits and Mode_Cycle. high
+0801a89c	LCD_AllOn	f	every shadow segment on (all 4x44), dirty flag: display test from Key_ShortPress. high
+0801affc	LCD_FontLookup	f	ASCII -> 7-segment code: digits table 0x08029154, A-Z/a-z tables, ' ' 0, '-' 4, '=' 0x82, 0xFF 0xBF, else 0; used by LCD_DrawChar. high (emulated)
+0801b090	Num_SplitDigits	f	(v) 5 decimal digits of v -> 0x20007db0/b4/b8/bc/c0 (ten-thousands..units), input to Num_ToText. high
+0801b396	LCD_FlushBarOnly	f	LCD_Flush during auto-hold (not logging, 0x20008053 clear): copies only bargraph bits (COM0 0x14FE, COM1 0x8FF, COM2 0xFF, COM3 0x1FE) so digits freeze, bar stays live; no UDR wait first. high
+0801b77a	LCD_ApplyContrast	f	App_StateInit: g_lcd_contrast 10..17 -> LCD_ContrastConfig(LCD->FCR & level) (ANDs the level with current FCR instead of using it; out of range passes stale r4). medium
+0801bacc	__aeabi_d2f	f	library: double (r0:r1) -> float, round to nearest, overflow to inf. high (emulated)
+0801be04	GPIO_PinAFConfig	f	library (StdPeriph): AFR[pin>>3] nibble = af; LCD_PinsInit uses AF11 (LCD). high
+0801c6f4	Wake_ArmExtiLine	f	(n) SYSCFG EXTI line n from port 7 (GPIOG), EXTI_Init interrupt mode rising+falling (0x0C), NVIC channel by line, enabled; Wake_ArmRotary per dial line 1..7. high
+0801c756	Exti_IrqChannel	f	EXTI line -> IRQn: 0..4 -> 6..10, 5..9 -> 23 (EXTI9_5), 10..15 -> 40 (EXTI15_10). high (emulated)
+0801c7aa	Exti_LineMask	f	line n (0..15) -> EXTI_Line bit 1 << n as a compare chain. high (emulated)
+0801c852	Exti_PinSource	f	line n (0..15) -> EXTI_PinSource n (identity compare chain). high
+0801cc08	USART_ITConfig	f	library (StdPeriph): (USARTx, it, state) set/clear 1 << (it & 31) in CR1/CR2/CR3 by it >> 5; RXNE 0x525, TXE 0x727 here (0x626 would be TC). high
+0801cc7c	USART_GetITStatus	f	library (StdPeriph): enable bit in CRx and flag bit (it >> 8) in SR both set -> 1. high
+0801d0d6	CalFile_CreateRetry	f	(tries) path "0:", up to n f_open("cal.bin", FA_CREATE_ALWAYS | FA_WRITE) into 0x20006a60; 0 ok, 1 failed. high
+0801d48c	Log_OpenAppend	f	f_open(log name 0x20007ec8, FA_WRITE) up to 21 tries (else 4), f_lseek to 0x20007ee0 up to 21 tries (else 5), file size -> 0x20007edc; arg 0x14 from Log_Write is ignored. high
+0801d53a	Log_CreateRetry	f	(copy, tries) 0: f_open(log, FA_CREATE_ALWAYS | FA_WRITE); 1: second FIL 0x20006c84 create R/W, then 0x20007ecc opened FA_READ; 0 ok else last FRESULT in 0x200080f4. medium
+0801d5b0	Log_CreateNewFile	f	(tries) path "0:", Log_FindNextIndex, name from index (0x0801d838) or 0x0801d79c when 0x20007fae, Log_CreateRetry(0, 10); returns FRESULT. high
+# naming pass round 3, batch J (agent proposals, spot-checked)
+0801c9a4	LowPower_PVDOff	f	PWR_PVDCmd(DISABLE) wrapper; only caller LowPower_Prepare. high
+0801c9ae	LowPower_GateClocks	f	PWR_UltraLowPowerCmd(ENABLE), then AHBENR = AHBLPENR = 5 (GPIOA + GPIOC), APB1ENR = PWR only, APB2ENR = 0; from LowPower_Prepare before STOP. high
+0801cbdc	USART_Cmd	f	StdPeriph: CR1 UE (0x2000) set/clear; BLE_Start (1) / BLE_Stop (0) on USART2. library
+0801cbf8	USART_SendData	f	StdPeriph: DR = data & 0x1FF; caller 0800d170. library
+0801cc00	USART_ReceiveData	f	StdPeriph: DR & 0x1FF; USART2_IRQHandler RX path. library
+0801cc5e	USART_GetFlagStatus	f	StdPeriph: SR & flag (0x80 TXE from 0800d170). library
+0801ccec	USART_ClearITPendingBit	f	StdPeriph: SR = ~(1 << (it >> 8)); USART2_IRQHandler passes 0x525 RXNE and 0x727 (StdPeriph TXE, not TC: TC is 0x626; a write to read-only TXE does nothing). library
+0801d51a	Log_BeginNextPart	f	from Log_WriteRetry after 20 failed tries: 0x2000801c = 1 (file open request), 0x20008024 = 1 (Log_Write creates a new file), part number 0x20007fae++ (Log_MakePartName). high
+0801db34	Log_SeedMax	f	MAX record = current row: row number 0x20007d40 -> 0x20007d54, mode/range 0x20007ff4 -> 0x20008027, flags 0x20007ff5 -> 0x20008029, value 0x20007d1c -> 0x20007d4c; Log_TrackMaxMin row 1, Log_CheckMax. high
+0801db64	Log_SeedMin	f	MIN twin of Log_SeedMax: -> 0x20007d58 / 0x20008028 / 0x2000802a / 0x20007d50; Log_TrackMaxMin row 1, Log_CheckMin. high
+0801e010	File_Tell	f	(FIL *) returns fp->fptr (+8, FatFs R0.08a FIL); log FIL 0x20006a60 -> pre-write size 0x20007edc / 0x20007ee0 (append position) for Log_VerifyWrite. high
+0801e018	Log_PutRowNumber	f	(row) CSV row-number field: Log_FormatRow kind 100 (number) then kind 0 (comma); 0 ok, 1 write error; Log_WriteDataRow and MAX/MIN rows. high
+0801e048	Log_PutFunc	f	(mode) CSV "Func." field: Log_FormatRow kind mode + 0x15 (mode > 0x19 -> 2); 0 ok, 1 error. high
+0801e7fa	Log_PutValue	f	(mode, range, value) CSV value field: Log_FormatRow kind 200 with Display_DecimalPlaces(mode, range) as the decimals; returns its status. high
+0801f7ac	Log_UIntToStr	f	(u32) decimal digits right to left into a buffer ending NUL at 0x20007bef; returns pointer to the first digit (r0); used by Log_FormatRow. high
+0801f84c	SD_MountRetry	f	(tries) SD_InitMountAttempt up to n times, stops at the first 0; returns last code (1 init, 2 no card); CalFile_Save/Load and Log_Write pass 10. high
+0801f87e	SD_InitMountAttempt	f	SD_LowLevel_DeInit + SD_InitMount, up to 0x300 times while it fails; 1 = never succeeded, else SD_Detect == 0 -> 2, 0 ok. Because SD_InitMount only reports f_mount (always FR_OK) the loop runs once and code 1 is dead. high
+0801f8ba	SD_InitMount	f	SD_Init() (result discarded), f_mount(0, &FatFs 0x20006830); 1 only if f_mount fails, which R0.08a never does for drive 0: SD init errors surface later in chk_mounted/disk_initialize. high
+0802035c	__aeabi_cfrcmple	f	IAR runtime float compare, reversed (flags of b <=> a; NaN -> C set, Z clear); Temp_CToF, LCD_SubDbm. Disassembly checked. library
+08020390	__aeabi_cfcmple	f	IAR runtime float compare (flags of a <=> b; NaN unordered); LCD_SubDbm dBm vs 0. Disassembly checked. library
+08020a46	RTC_ClearITPendingBit	f	StdPeriph: ISR = ~((it >> 4) | INIT) | (ISR & INIT); RTC_WKUP_IRQHandler RTC_IT_WUT. library
+08020b50	EXTI_GetFlagStatus	f	StdPeriph: PR & line (no IMR test, so not GetITStatus); EXTI0..4 and EXTI9_5 handlers. library
+08020b6a	EXTI_ClearITPendingBit	f	StdPeriph: PR = line (same body as EXTI_ClearFlag); EXTI handlers and RTC_WKUP (line 20); which of the identical pair is a guess. library
+08020b84	mem_cpy	f	library (FatFs static): byte copy; dir_register, f_read, f_write. high
+08020ba0	mem_set	f	library (FatFs static): byte fill; sync, dir_next, dir_register, create_name. high
+08020bb6	mem_cmp	f	library (FatFs static): byte compare, returns difference; dir_find 11-byte name. high
+08020bda	chk_chr	f	library (FatFs static): strchr-style test; create_name checks illegal chars (0x08029164). high
+08020d3e	clust2sect	f	library (FatFs): clst - 2 < n_fatent - 2 ? (clst - 2) * csize + database : 0. high
+08021b50	validate	f	library (FatFs R0.08a static): fs NULL / fs_type 0 / id mismatch -> FR_INVALID_OBJECT 9; disk_status STA_NOINIT -> FR_NOT_READY 3. high
+08021b80	f_mount	f	library (FatFs R0.08a): vol != 0 -> FR_INVALID_DRIVE 11; old and new fs_type = 0, FatFs[0] (0x20007c58) = fs; always FR_OK for drive 0. high
+0802224c	f_close	f	library (FatFs): f_sync, then fp->fs = 0 on FR_OK. high
+0802268a	SD_GetStatus	f	ST sdio_sd.c: SD_GetState (named SD_DiskStatus 080226ac) == 4 TRANSFER -> 0 OK, 0xFF ERROR -> 2, else 1 BUSY; disk_read/disk_write poll it. high
+08022932	SD_PowerOFF	f	ST sdio_sd.c: SDIO_SetPowerState(OFF), returns SD_OK; after CalFile_Save/Load, Log_Write and in main. high
+08022f96	SD_SelectDeselect	f	ST sdio_sd.c: CMD7 (arg = RCA << 16), short response, CPSM on, SD_CmdResp1Error(7); from SD_Init. high
+08023524	SD_ProcessDMAIRQ	f	ST sdio_sd.c: DMA2 ISR TC4/... (0x10002000) -> DMAEndOfTransfer 0x20007ef8 = 1, DMA_ClearFlag(TC4 | TE4); from DMA2_Channel4_IRQHandler. high
+08023ca0	strlen	f	library (IAR, word-at-a-time scan); Log_FormatRow, Log_PutTime. high
+08023edc	__aeabi_errno_addr	f	IAR runtime: returns &errno (0x20000228); sqrt / log10 set EDOM / ERANGE through it. library
+08023f2c	__aeabi_cdcmple	f	IAR runtime double compare (flags of a <=> b, hi words then lo; NaN unordered); log10 vs sqrt(0.5). Disassembly checked. library
+08023f5c	disk_initialize	f	diskio glue: returns SD_Init() result as DSTATUS (drive ignored); chk_mounted. high
+08023f6e	disk_status	f	diskio glue: drive != 0 -> STA_NOINIT (1), else 0 (no card check); chk_mounted, validate. high
+08023f7e	disk_read	f	diskio glue: ONE SD_ReadBlock(buff, sector << 9, 512) whatever count says, then polls SD_GetStatus 20000 times (timeout -> 2); multi-sector reads would return only the first sector (no caller asks: all reads are <= 512 B). high
+0802402e	get_fattime	f	diskio glue: constant 0x3449B3C0 = 2006-02-09 22:29:00; file times come from File_SetTimestamp (f_utime) instead. high
+08024038	disk_ioctl	f	diskio glue: GET_SECTOR_COUNT -> 0x20000 (fixed, 64 MB), GET_SECTOR_SIZE -> 512, GET_BLOCK_SIZE -> 32, CTRL_SYNC nothing; always RES_OK; only sync calls it. high
+08024074	SDIO_DeInit	f	StdPeriph: RCC_APB2PeriphResetCmd(SDIO 0x800) on then off; SD_Init, SD_LowLevel_DeInit. library
+080240c4	SDIO_GetPowerState	f	StdPeriph: POWER & 3; SD_InitializeCards. library
+0802414a	SDIO_ReadData	f	StdPeriph: FIFO; SD_FindSCR polling read. library
+0802418e	SDIO_GetITStatus	f	StdPeriph: STA & it (twin of SDIO_GetFlagStatus 0802416e); SD_ProcessIRQSrc. library
+080241a8	SDIO_ClearITPendingBit	f	StdPeriph: ICR = it (twin of SDIO_ClearFlag 08024188); SD_ProcessIRQSrc. library
+080241f0	DMA_Init	f	StdPeriph: CCR & 0xFFFF800F | dir/inc/size/mode/prio/m2m, CNDTR, CPAR, CMAR; DMA2 ch4 SD Tx/Rx config. library
+0802422e	DMA_Cmd	f	StdPeriph: CCR EN bit; SD DMA Tx/Rx config. library
+0802424a	DMA_ITConfig	f	StdPeriph: CCR |= / &= ~it (2 = TC); SD DMA Tx/Rx config. library
+08024260	DMA_ClearFlag	f	StdPeriph: bit 28 set -> DMA2.IFCR else DMA1.IFCR; 0x1000F000 = all DMA2 ch4 flags. library
+0802427c	NMI_Handler	f	stm32l1xx_it.c stub: returns. library
+0802427e	HardFault_Handler	f	stm32l1xx_it.c stub: while (1). library
+08024280	MemManage_Handler	f	stm32l1xx_it.c stub: while (1). library
+08024282	BusFault_Handler	f	stm32l1xx_it.c stub: while (1). library
+08024284	UsageFault_Handler	f	stm32l1xx_it.c stub: while (1). library
+08024286	SVC_Handler	f	stm32l1xx_it.c stub: returns. library
+08024288	DebugMon_Handler	f	stm32l1xx_it.c stub: returns. library
+0802428a	PendSV_Handler	f	stm32l1xx_it.c stub: returns. library
+080248c8	RTC_WKUP_IRQHandler	f	vector name kept: RTC_IT_WUT pending -> RTC_ClearITPendingBit + EXTI line 20 clear; no other work. high
+080248e8	EXTI0_IRQHandler	f	vector name kept: only clears pending EXTI line 0 (wake from STOP). high
+080248fc	EXTI1_IRQHandler	f	vector name kept: only clears pending EXTI line 1 (rotary wake). high
+08024910	EXTI2_IRQHandler	f	vector name kept: only clears pending EXTI line 2 (rotary wake). high
+08024924	EXTI3_IRQHandler	f	vector name kept: only clears pending EXTI line 3 (rotary wake). high
+08024938	EXTI4_IRQHandler	f	vector name kept: only clears pending EXTI line 4 (rotary wake). high
+08024a24	ADC1_IRQHandler	f	vector name kept: ADC_GetITStatus(0x106) -> ADC_ClearITPendingBit; no work (ADC IRQ never enabled by Board_NVICInit). high
+08024f06	App_OffNotice	f	from App_Sleep before STOP: "-oFF-" on the main display (08017092), PE7 (buzzer) high for 100 x 10 ms ticks = 1 s, then low; whether a steady PE7 level sounds the buzzer is not confirmed. medium
+08028cdc	__iar_zero_init3	f	IAR runtime: init-table entry (table 0x08029078 -> 0x08028cdd, size 0x6EBC, dest 0x20001240): branches to the loop test; zeroes {size, addr} pairs, odd addr = r9-relative. library
+08028d12	__iar_zero_init3_next	f	loop head inside __iar_zero_init3 (Ghidra split): load next size, 0 ends, else back into the zero loop; not a separate function. library
+08029126	__low_level_init	f	IAR runtime default: returns 1 (do data init); called first by __iar_program_start. library
+08029174	Reset_Handler	f	vector name kept: SystemInit(), __iar_program_start() (never returns). high
+08029298	WWDG_IRQHandler	f	IAR startup PUBWEAK default: b.w self (hang). library
+0802929c	PVD_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292a0	TAMPER_STAMP_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292a4	FLASH_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292a8	RCC_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292ac	DMA1_Channel1_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292b0	DMA1_Channel2_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292b4	DMA1_Channel3_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292b8	DMA1_Channel4_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292bc	DMA1_Channel5_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292c0	DMA1_Channel6_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292c4	DMA1_Channel7_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292c8	USB_HP_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292cc	USB_LP_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292d0	DAC_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292d4	COMP_CA_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292d8	LCD_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292dc	TIM9_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292e0	TIM10_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292e4	TIM11_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292e8	TIM4_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292ec	I2C1_EV_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292f0	I2C1_ER_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292f4	I2C2_EV_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292f8	I2C2_ER_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+080292fc	SPI1_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029300	SPI2_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029304	USART1_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029308	USART3_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+0802930c	RTC_Alarm_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029310	USB_FS_WKUP_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029314	TIM6_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029318	TIM7_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+0802931c	TIM5_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029320	SPI3_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029324	UART4_IRQHandler	f	vector 64 = IRQ 48 (UART4 on STM32L1 high density; was Vector64_Handler); PUBWEAK default b.w self. library
+08029328	UART5_IRQHandler	f	vector 65 = IRQ 49 (UART5; was Vector65_Handler); PUBWEAK default b.w self. library
+0802932c	DMA2_CH1_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029330	DMA2_CH2_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029334	DMA2_CH3_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+08029338	DMA2_CH5_IRQHandler	f	IAR startup PUBWEAK default: b.w self. library
+0802933c	AES_IRQHandler	f	IAR startup PUBWEAK default: b.w self (vector 71 = IRQ 55). library
+# naming pass round 3, batch I (agent proposals, spot-checked)
+0800662c	LowZ_ResetQuietCount	f	LowZ_AutoAcDc: quiet-display countdown 0x20000239 = 5 (re-arms the AC/DC toggle); tests 0x20008098 but both branches store 5 (dead branch, harmless). high
+0800699a	VA_ACI_CalClamp	f	Mode_ACI_Measure for AC VA modes 13-15 (I half): Cal_Apply, negative reading -> 0. high
+08006a9e	VA_ACV_Measure	f	Mode_ACV_OnAD1/Mode_ACmV_OnAD1 in AC VA modes 13-15 (V half): Cal_Apply, clamp >= 0, Reading_StabilityFilterAC(20, 10), ACV_AfterReading. high
+0800a5b2	HY_RMS_DiscardLowZ	f	HY_OnRMS target for LowZ (mode 0): thunk to HY_RMS_Discard. high
+0800a7f8	HY_RMS_NopACmV	f	HY_OnRMS target for ACmV (mode 4): empty, the HY3131 RMS result is ignored. high
+0800a7fa	HY_RMS_NopACI	f	HY_OnRMS target for AC current modes 16/18/20: empty. high
+0800b6d4	Counter_ComputeDuty	f	0x20007e34 = count 0x20007e44 / (gate 0x20007e48 / 1000), 64-bit divide: high-time ratio in per-mille units; Counter_Duty shows it directly, Counter_PulseWidth scales the period by it /1000. medium
+0800c5d2	BLE_BuildPacket_Thunk	f	main: thunk to BLE_BuildPacket. high
+0800c9fc	BLE_SubBattery	f	(offset) BLE sub field for SETUP page 1: code 0x6E, flags 1, value g_battery_dV (BLE_PutU16). high
+0800ca2a	BLE_SubApo	f	(offset) BLE sub field for SETUP page 2: code 0x78 (APO on, g_apo_off 0) or 0x7D (off), flags 2, value 0. Never executed. high
+0800ca64	BLE_SubContrast	f	(offset) BLE sub field for SETUP page 4: code 0xA0, flags 0, value g_lcd_contrast - 10. Never executed. high
+0800ca96	BLE_SubYear	f	(offset) BLE sub field for SETUP page 5: code 0x82, flags 0, value year 0x200080d7 (two digits). Never executed. high
+0800ce28	BLE_SubBurden_Thunk	f	BLE_BuildPacket SETUP page 12: thunk to BLE_SubBurden (offset arg passed through, fixed 9 anyway). high
+0800ce32	BLE_SubBurdenFlag	f	(offset, on) BLE sub field: code 0x9B (on) / 0x9C (off), flags 3, value 0; current burden flag 0x200080a5 (page 10) or g_va_burden_display (page 11). medium
+0800d0c8	BLE_SubBlank	f	(offset) empty BLE sub field: code 0, flags 0, value 0; pages without a field. high
+0800d100	BLE_PutU16	f	(offset, value) |value| as big-endian 16 bits into g_ble_tx[offset], [offset+1]; used by every BLE sub-field writer. high
+0800d170	USART_SendByteBlocking	f	(USARTx, byte) spin on flag 0x80 (TXE) then send; BLE_SendReply, TIM2_IRQHandler (first packet byte), USART2_IRQHandler. high
+0800d6e0	VA_SubSelectDecimals	f	VA sub display half switch (VA_SubAlternate, Setup_NextPage to page 10): decimals 0x20008040 for V (0801801e) or I (VA_SubDecimalsAmps) by 0x200080c2; clears 0x20007fd8, sub dirty flags 0x20008062/63. high
+0800d80c	Mode_ConfigureHyCalCap	f	(reload) Mode_ConfigureHyCal(reload) then Cap_SetTimeout; from Mode_ApplyChange, VA_ApplyRange, DC/AC VA handlers. high
+0800e278	Display_LatchOverload	f	Display_Update last step: 0x20008049 = OL flag 0x20008046 (the copy Record_EncodeMain uses). high
+0800ea24	Value_AtLeastAbs	f	(value, limit) 1 when value >= limit or value <= -limit; Display_VoltageWarning thresholds (300/3000/30000/6000 counts). high
+0800eea8	Buzzer_On	f	(ms) buzzer active 0x20008079, duration 0x20007fb4, PE7 high only if g_buzzer_enabled; from Beep and Mode_ApplyChange(300). high
+0800eed0	Buzzer_OnAlways	f	(ms) as Buzzer_On but ignores g_buzzer_enabled: continuity, diode, auto-hold capture, HV warning (TIM2) and main beeps sound even with the buzzer set off. high
+0800fb1e	Cal_GainFromRef	f	(unused, ref float) g_cal_gain = captured average 0x20007e20 / ref; capacitance 10000.0 (r5 1000.0). Never executed. high
+0800fb38	Cal_GainFrom50000	f	g_cal_gain = 0x20007e20 / 50000.0, the default reference in Cal_ComputeGain. high
+0800fb58	Cal_GainFrom30000	f	g_cal_gain = 0x20007e20 / 30000.0 (range 2 of DCV/ACV/ACmV, diode). high
+0800fb78	Cal_GainFrom10000	f	g_cal_gain = 0x20007e20 / 10000.0 (A range 2, VA current r >= 2). high
+0800fb98	Cal_GainFrom6000	f	g_cal_gain = 0x20007e20 / 6000.0 (range 3, 600 V). high
+0800fbb8	Cal_GainFromPeak	f	g_cal_gain = 0x20007e20 / 42426.4068 (30000 x sqrt 2, double divide) in 1 ms PEAK. high
+0801013e	Bcd_FromByte	f	(0..99) -> packed BCD (tens << 4 | ones). high
+080101ac	RTC_WriteRegBcd	f	(reg, value) RTC_Select, command reg+1, value as BCD, RTC_Deselect; RTC_WriteClock for regs 2/4/6/10/12/14 (year..second). high
+08010308	RTC_Select	f	RTC 3-wire start: PB6, PB7 low, PC13 (CE) high. medium
+0801031e	RTC_Deselect	f	RTC 3-wire end: PB6, PB7 low, PC13 (CE) low. medium
+0801033c	RTC_DataOutput	f	PB7 (RTC data) as push-pull output (GPIO_Init mode 1). high
+08010378	RTC_DataInput	f	PB7 (RTC data) as input with pull-up (GPIO_Init mode 0, pupd 1). high
+080103a8	Date_ClampDay	f	(year, month, day) day limited to Date_DaysInMonth; SETUP year and month/day edits. high
+080104d4	Settings_ClearVariantAcv0	f	Cal_AcGainCapture ACV r0: EEPROM 0x1F = 0xA5, verified, up to 10 tries (clears the boot-time g_variant_acv0, but RAM g_variant_acv0 is not updated until reboot). high
+080104f8	CalFile_EeRead	f	(offset) wrapper of EE_ReadU8 for CalFile_Save/CalFile_Load. high
+08010504	CalFile_EeWrite	f	(offset, byte) wrapper of EE_WriteByte for CalFile_Load. high
+08010bca	Log_SaveCounters	f	Log_Stop: ring slot 0x20007fa4 -> 0x20007fac and row count 0x20007d38 -> 0x20007d3c (restored by Log_RestoreCounters). high
+08010ccc	Log_SaveMode	f	Log_Start: g_mode/g_range -> 0x2000800d/0x2000800e (logging session's mode). high
+08010ce2	LogView_LoadMode	f	Key_ShortPress entering the recall view: view mode/range 0x20007feb/fec = logged mode 0x2000800d/0e. Never executed. high
+08010ef4	Log_StoreRecord	f	(slot) wrapper of Record_Store; Log_StoreSample. high
+08010f02	Log_LoadRecord	f	(index) wrapper of Record_Load; LogView_Show, Log_WriteDataRow. high
+08010f28	Settings_ClearVariantOhm6	f	Cal_AcGainCapture Ohm r6: EEPROM 0x26 = 0xA5, verified, up to 10 tries; the caller then sets g_variant_ohm6 = 1, the opposite of what Settings_VariantOhm6 loads at the next boot (0). Never executed. high
+08010ff0	Mode_LastDcvAcv	f	Mode_FromRotary V position: EEPROM 0x08 -> 1 DCV / 2 ACV, 0x82 -> ACV + Mode_AcDcOn; else 1. high
+08011020	Mode_LastMv	f	Mode_FromRotary mV position: EEPROM 0x09 -> 3/4/5 (DCmV/ACmV/temp), else 3. high
+08011046	Mode_LastHz	f	Mode_FromRotary Hz position: EEPROM 0x0A -> 6/7/8 (Hz/pulse/duty), else 6. high
+0801106c	Mode_LastOhm	f	Mode_FromRotary Ohm position: EEPROM 0x0B -> 9..12 (Ohm/cont/diode/cap), else 9. high
+08011098	Mode_LastVa	f	Mode_FromRotary VA position (rotary 0x20): EEPROM 0x0C -> 24 or 15, else 24. high
+080110b8	Mode_LastMicroAmp	f	Mode_FromRotary uA position: EEPROM 0x0D -> 17/16/13/22, else 17. high
+080110e4	Mode_LastMilliAmp	f	Mode_FromRotary mA/A position: EEPROM 0x0E 19/21 -> 19, 18/20 -> 18, else 19 (Jack_Poll then picks mA or A). high
+08011118	Mode_SaveLast	f	(EEPROM offset, mode) EE_WriteByte; offset 8 mode 2 with AC+DC 0x200080ba stores 0x82; from Mode_SaveForPosition. high
+0801159c	Cal_RecordAddr	f	EEPROM cal record offset for (g_mode, g_range): table 0x08028ee8[mode] + range * 16; arg unused. high
+080115cc	Cal_AcFreqAddr	f	(mode, range) EEPROM AC frequency-point offset: table 0x08028ee8[mode] + 8 + range * 16 (modes 16/18 force range 1). high
+08011924	Cal_SanitizeTrim	f	trim 0x20007e14 outside +-3000 -> 0; after Cal_LoadRecord / Cal_StoreField (used by Ohm_R6Correction). high
+08011fd4	EE_ReadS16	f	(offset) EE_ReadU16 sign-extended to int; Cal_LoadAcFreqPoints. high
+0801203a	EE_ReadU8	f	(offset) EE_ReadByte & 0xFF; settings, variant flags, last-mode loaders. high
+08012f78	__iar_ui2f_core	f	library: interior entry of __aeabi_ui2f past its zero test (normalize, round to float); called by __aeabi_i2f on -x. library
+080132cc	__iar_d2iz_core	f	library: shared core of __aeabi_d2iz: double exponent -> shifted mantissa, 0 below 1.0. library
+0801349c	Analog_PollAlternate	f	main: toggles 0x20008086 and runs Thermistor_Update or Battery_Update on alternate calls. high
+08013ec4	__aeabi_i2d	f	library: int -> double (negates, ui2d core, sets sign). library
+08013ed8	__aeabi_ui2d	f	library: unsigned int -> double; HY_RmsRead, ACDC_Combine. library
+08013edc	__iar_ui2d_core	f	library: interior of __aeabi_ui2d past its zero test; called by __aeabi_i2d. library
+08014118	__aeabi_l2f	f	library: int64 r0:r1 -> float (negate, ul2f core, sign); DC/AC VA averages 0x20007e20. library
+08014140	__iar_ul2f_core	f	library: interior of __aeabi_ul2f (entry 08014134) past its zero test; called by __aeabi_l2f. library
+080143e4	Jack_SetLeadWarning	f	Jack_Poll: 0x20008076 = 1 (lead in the wrong jack: main shows " LEAD"). high
+08014708	Mode_ToggleAcDc	f	Mode_Cycle from ACV: AC+DC off -> Mode_AcDcOn, else AC+DC off and g_mode = 1 (DCV). high
+08014948	Rotary_Poll	f	main 10 ms: Rotary_Debounce then Rotary_ApplyPending. high
+08014954	Rotary_ApplyPending	f	dial change pending 0x20008064 -> clear, Mode_FromRotary. high
+080153ac	Display_ResetToLive	f	leave recall view (0x20007fe4 = 0), Setup_InitialPage, all dirty flags (bar, main, icons, units, sub); Mode_ApplyChange, Key_ShortPress, TIM2, main. high
+08015934	MinMax_RedrawIfHold	f	when HOLD 0x2000804f is on: main display = MinMax_Selected(1) with decimals 0x2000803f, or " OFL" when 0x20008046; MinMax_KeyShort, Key_LongPress. medium
+08015974	MinMax_Init	f	MIN/MAX start: state 0x2000804e = 1 (MAX), max = INT_MIN, min = INT_MAX, mean/remainder/count 0. high
+08016b4c	Key_AllowsLong	f	(key code) 1 for single keys 0x01..0x80 except 0x20, plus the combination 0x28; Keys_Scan long press. high
+08016b7c	Bits_IsOneHot8	f	(byte) 1 when exactly one of bits 0..7 is set; Rotary_Debounce and Keys_Scan. high
+08016bb8	Key_IsCombo28	f	(key code) == 0x28 (two keys together, 0x20 + 0x08); Keys_Scan. Never executed. high
+08017092	LCD_ShowOff	f	clear shadow and show "-oFF-" on the main display (flushes); from the power-off screen 08024f06 (1 s beep). high
+080171fa	LCD_UpdateMainDP	f	0x2000803f = Display_DecimalPlaces(g_mode, g_range), LCD_SetMainDP, flush; Mode_ApplyChange, VA_ApplyRange. high
+08017222	LCD_RedrawIconsUnits	f	LCD_RefreshDirty flag 0x20008060: LCD_DrawIcons, LCD_ClearUnits, LCD_DrawUnits, Bar_Reset, flush pending. high
+08017700	LCD_DrawVaMilliIcon	f	(mode, range) VA A-position modes 24/15: "m" icon (COM1 SEG10) on for range < 2, off otherwise; VA_ApplyRange. Never executed. medium
+0801776e	LCD_RedrawUnitPrefix	f	LCD_RefreshDirty flag 0x20008061: unit prefixes for Hz (6), Ohm (9), cap (12). high
+08017f94	LCD_SubFrequency	f	sub frequency: LCD_SetSubFreqDP, LCD_DrawSubValue(0x20007d84 / 10, 0x20008040); ACV/ACmV page 10, AC current pages 11/12. high
+0801801e	VA_SubDecimalsVolts	f	VA sub display, voltage half: decimals 0x20008040 = 3 when V high 0x200080c6, else 4. high
+08018102	Freq_SubDecimals	f	(freq range 0x2000803e) -> sub decimals: 0->2, 1->1, 2->3, 3->2, 4->1, else 0; LCD_SetSubFreqDP. high
+08018460	LCD_SubApo	f	(g_apo_off) SETUP page 2: "APOoN" / "APOoF" with sub DP 2. high
+08018490	LCD_SubBuzzer	f	(g_buzzer_enabled) SETUP page 3: "b-On " / "b-OFF". high
+080186ac	LCD_SubBurdenOnOff	f	(flag) "bdOn " / "bdOFF" with sub DP 3: current page 10 (0x200080a6), VA page 11 (0x200080a9). high
+080186e0	LCD_SubDiodeVolts	f	diode page 10: "   15" (g_diode_15v) or "    3". high
+08018788	LCD_SubYear	f	(flush, year 0..99) SETUP page 5: 2000 + year as four digits; live 0x200080d7 or edit copy 0x200080dd. high
+0801896c	LCD_SubHourMinuteBlink	f	(flush) TIM2: LCD_SubHourMinute with the live time 0x200080da/db or the edit copy 0x200080e0/e1 (0x2000806e). medium
+080189b0	LCD_SubMeterId	f	(flush) SETUP page 8: meter ID 0x20007d18 via Num_ToText(4). medium
+08018ad8	Temp_ToDisplayTenths	f	(0.01 degC) -> 0.1 deg (degF unless g_temp_unit) for the sub display and BLE; BUG: rounds on the result's own last digit (x/10, +1 if (x/10) % 10 >= 5) instead of x % 10: 77.50 F -> 77.6 (emulated). high
+08018b14	Bar_RedrawDirty	f	LCD_RefreshDirty flag 0x2000805e: Bar_Segments except Hz/pulse/duty, temp, cap. high
+08019792	LCD_MainSdCal	f	boot SD state 1: main "Sd.CAL" (DP 3, minus off), flush. high
+080197b6	LCD_MainSdSave	f	boot SD state 2: main "Sd.SAv", flush. high
+080197e0	LCD_MainSdSet	f	boot SD state 2 (0x20008089): main "Sd.SEt", flush. medium
+08019854	LCD_MainCal1	f	boot calibration entry: main " CAL1" (minus off), dirty. high
+08019880	LCD_SubCal	f	sub " CAL " (sub minus off, no DP); boot cal entry and LCD_DrawSub in cal mode. high
+08019a74	LCD_ShowLead	f	(line) " LEAD"; LCD_DrawMain, LCD_ShowOFL, LCD_ShowOpen. high
+08019a86	LCD_ShowDashes	f	(line) "-----"; VA modes main, VA sub halves. high
+08019ae0	LCD_DrawText5	f	(line 0 main / 1 sub, text) five chars via LCD_DrawChar at positions 5..9 (main) or 0..4 (sub). high
+08019b12	LCD_DrawCharAt	f	(position, text) one LCD_DrawChar; LCD_SubEditBlink. high
+08019b24	LCD_DrawText2	f	(position, text) two chars at position, position+1; LCD_SubEditBlink date fields. high
+08019cbc	LCD_BlinkApoIcon	f	main, last 60 s before auto power-off (g_apo_seconds < 60): APO icon (COM2 SEG39) follows the 1 Hz phase 0x200080e7, flush: the APO icon blinks during the final minute. high
+08019cf0	LCD_DrawLowBatIcon	f	(flush) low-battery icon (COM3 SEG39) from 0x2000803b; Battery_Update, LCD_DrawIcons. high [video: sub_8019cf1 IC_X_3_39, identified here]
+08019d2c	LCD_DrawBtIcon	f	(flush) BT icon (COM0 SEG31) from g_ble_on; BLE_Toggle, LCD_DrawIcons. high [video: sub_8019d2d, confirmed]
+08019d68	LCD_DrawAutoIcon	f	(flush) AUTO icon (COM3 SEG32) from Range_IsAuto. high [video: sub_8019d69, confirmed]
+0801a370	LCD_DrawHvIcon	f	high-voltage icon (COM0 SEG39, code 0x27, not in the icon tables) from 0x200080b1; Display_VoltageWarning, LCD_DrawIcons. medium
+0801bd08	__aeabi_cfcmpeq	f	library: float compare for equality, result in flags (+0 == -0, NaN unequal); Cal_DivideGain gain != 0 test, Mode_Cap_OnCounter. library
+0801bd24	__aeabi_f2uiz	f	library: float -> unsigned int, truncating; negatives -> 0, overflow -> 0xFFFFFFFF; Mode_Cap_OnCounter, LCD_SubDbm. library
+0801bdec	GPIO_StructInit	f	library (StdPeriph): pins 0xFFFF, mode in, speed 400 kHz, push-pull, no pull; LCD_PinsInit. library
+0801bfd2	RCC_AHBPeriphClocksOff	f	RCC_AHBPeriphClockCmd(0xFF, DISABLE): GPIO clocks off; Pins_AllAnalog. high
+0801c8ec	HY_BusIdle	f	Power_Off: HY3131 bus to idle: PF1 (CS) and PF2 (DI) high, PF0 (CK) low. high
+0801c908	LCD_PowerDown	f	Power_Off: clear + flush, LCD_Cmd(DISABLE), wait while LCD flag 1 (ENS), LCD clock (APB1 0x200) off. high
+0801c92e	Timers_Off	f	LowPower_Prepare: TIM2 and TIM3 disabled and their APB1 clocks off. high

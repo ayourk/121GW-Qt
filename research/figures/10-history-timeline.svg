@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="800" viewBox="0 0 1000 800" font-family="sans-serif">
+<rect x="0" y="0" width="1000" height="800" fill="#F4F6F8"/>
+<text x="16" y="32" font-size="20" font-weight="bold" fill="#1B2026">The EEVblog 121GW, 2015 to 2026</text>
+<text x="16" y="54" font-size="13" fill="#56616B">Design with UEi/Kane, the Kickstarter, shipping, 21 firmware releases, and the 2026 reconstructions. Sources in history.md.</text>
+<line x1="70" y1="70" x2="70" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="106.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2015</text>
+<line x1="142" y1="70" x2="142" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="178.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2016</text>
+<line x1="214" y1="70" x2="214" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="250.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2017</text>
+<line x1="286" y1="70" x2="286" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="322.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2018</text>
+<line x1="358" y1="70" x2="358" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="394.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2019</text>
+<line x1="430" y1="70" x2="430" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="466.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2020</text>
+<line x1="502" y1="70" x2="502" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="538.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2021</text>
+<line x1="574" y1="70" x2="574" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="610.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2022</text>
+<line x1="646" y1="70" x2="646" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="682.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2023</text>
+<line x1="718" y1="70" x2="718" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="754.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2024</text>
+<line x1="790" y1="70" x2="790" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="826.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2025</text>
+<line x1="862" y1="70" x2="862" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<text x="898.0" y="780" font-size="12" fill="#56616B" text-anchor="middle">2026</text>
+<line x1="934" y1="70" x2="934" y2="760" stroke="#D5DBE0" stroke-width="1"/>
+<line x1="70" y1="760" x2="934" y2="760" stroke="#56616B" stroke-width="1.5"/>
+<text x="984" text-anchor="end" y="197" font-size="12" font-weight="bold" fill="#0F78B4">Design</text>
+<line x1="70" y1="205" x2="934" y2="205" stroke="#0F78B4" stroke-width="2" opacity="0.35"/>
+<text x="984" text-anchor="end" y="402" font-size="12" font-weight="bold" fill="#D63D36">Campaign, shipping, apps</text>
+<line x1="70" y1="410" x2="934" y2="410" stroke="#D63D36" stroke-width="2" opacity="0.35"/>
+<text x="984" text-anchor="end" y="537" font-size="12" font-weight="bold" fill="#2E7D32">Firmware releases</text>
+<line x1="70" y1="545" x2="934" y2="545" stroke="#2E7D32" stroke-width="2" opacity="0.35"/>
+<text x="602.8000000000065" text-anchor="end" y="672" font-size="12" font-weight="bold" fill="#6A4C93">After 2.05</text>
+<line x1="70" y1="680" x2="934" y2="680" stroke="#6A4C93" stroke-width="2" opacity="0.35"/>
+<circle cx="72.9" cy="205" r="5.5" fill="#0F78B4"/>
+<line x1="72.9" y1="205" x2="72.9" y2="114" stroke="#0F78B4" stroke-width="1"/>
+<text x="72.9" y="110" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Jan 2015: first contact</text>
+<text x="72.9" y="124" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">via Klein Tools to Kane/UEi</text>
+<circle cx="88.0" cy="205" r="5.5" fill="#0F78B4"/>
+<line x1="88.0" y1="205" x2="88.0" y2="258" stroke="#0F78B4" stroke-width="1"/>
+<text x="88.0" y="270" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Mar 2015: first specs</text>
+<text x="88.0" y="284" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">Bluetooth, VA, AA cells</text>
+<circle cx="161.4" cy="205" r="5.5" fill="#0F78B4"/>
+<line x1="161.4" y1="205" x2="161.4" y2="149" stroke="#0F78B4" stroke-width="1"/>
+<text x="161.4" y="145" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Apr 2016: PIC24F prototype</text>
+<text x="161.4" y="159" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">3D-printed case</text>
+<circle cx="185.2" cy="205" r="5.5" fill="#0F78B4"/>
+<line x1="185.2" y1="205" x2="185.2" y2="223" stroke="#0F78B4" stroke-width="1"/>
+<text x="185.2" y="235" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Aug 2016: STM32 + SD card</text>
+<text x="185.2" y="249" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">new board and firmware</text>
+<circle cx="237.8" cy="205" r="5.5" fill="#0F78B4"/>
+<line x1="237.8" y1="205" x2="237.8" y2="184" stroke="#0F78B4" stroke-width="1"/>
+<text x="237.8" y="180" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">May 2017: final test unit</text>
+<text x="237.8" y="194" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">at the ETL test house</text>
+<circle cx="281.0" cy="410" r="5.5" fill="#D63D36"/>
+<line x1="281.0" y1="410" x2="281.0" y2="319" stroke="#D63D36" stroke-width="1"/>
+<text x="273.0" y="315" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="end">Dec 3-13 2017: Kickstarter</text>
+<text x="273.0" y="329" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">2,296 backers, AU$644,674</text>
+<text x="273.0" y="343" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">goal AU$42,000</text>
+<circle cx="287.4" cy="410" r="5.5" fill="#D63D36"/>
+<line x1="287.4" y1="410" x2="287.4" y2="463" stroke="#D63D36" stroke-width="1"/>
+<text x="287.4" y="475" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Jan 2018: production units</text>
+<text x="287.4" y="489" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">range-switch shim (Mar)</text>
+<circle cx="299.0" cy="410" r="5.5" fill="#D63D36"/>
+<line x1="299.0" y1="410" x2="299.0" y2="374" stroke="#D63D36" stroke-width="1"/>
+<text x="305.0" y="370" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Mar 2018: Windows app</text>
+<circle cx="322.7" cy="410" r="5.5" fill="#D63D36"/>
+<line x1="322.7" y1="410" x2="322.7" y2="428" stroke="#D63D36" stroke-width="1"/>
+<text x="328.7" y="440" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Jul 2018: iOS app;</text>
+<text x="328.7" y="454" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">backers fulfilled</text>
+<circle cx="656.1" cy="410" r="5.5" fill="#D63D36"/>
+<line x1="656.1" y1="410" x2="656.1" y2="374" stroke="#D63D36" stroke-width="1"/>
+<text x="656.1" y="370" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Feb 2023: iOS app</text>
+<text x="656.1" y="384" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">source published</text>
+<circle cx="288.2" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="289.6" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="297.5" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="308.3" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="313.4" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="319.1" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="320.6" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="329.2" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="329.9" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="341.4" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="355.8" cy="545" r="3" fill="#2E7D32" opacity="0.6"/>
+<circle cx="282.4" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="282.4" y="531" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">1.00</text>
+<circle cx="301.8" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="301.8" y="569" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">1.10</text>
+<circle cx="337.8" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="337.8" y="531" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">1.51</text>
+<circle cx="350.1" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="350.1" y="569" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">1.57</text>
+<circle cx="383.9" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="383.9" y="531" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">2.00</text>
+<circle cx="411.3" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="411.3" y="569" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">2.02</text>
+<circle cx="437.9" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="437.9" y="531" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">2.04</text>
+<circle cx="524.3" cy="545" r="5.5" fill="#2E7D32"/>
+<text x="524.3" y="569" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="middle">2.05</text>
+<text x="350.8" y="593" font-size="11" fill="#56616B" text-anchor="middle">21 public images, 1.00 to 2.05 (small dots: other releases)</text>
+<text x="534.3" y="531" font-size="11" fill="#56616B">2021-04-22: last release</text>
+<circle cx="658.2" cy="680" r="5.5" fill="#6A4C93"/>
+<line x1="658.2" y1="680" x2="658.2" y2="698" stroke="#6A4C93" stroke-width="1"/>
+<text x="658.2" y="710" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="start">Mar 2023: Kane 555 spin-off;</text>
+<text x="658.2" y="724" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="start">Dave: production not guaranteed</text>
+<circle cx="906.6" cy="680" r="5.5" fill="#6A4C93"/>
+<line x1="906.6" y1="680" x2="906.6" y2="730" stroke="#6A4C93" stroke-width="1"/>
+<text x="900.6" y="742" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="end">Aug 2026: Kane "could EOL</text>
+<text x="900.6" y="756" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">the 121GW at any time"</text>
+<circle cx="921.8" cy="680" r="5.5" fill="#6A4C93"/>
+<line x1="921.8" y1="680" x2="921.8" y2="584" stroke="#6A4C93" stroke-width="1"/>
+<text x="913.8" y="580" font-size="12" font-weight="bold" fill="#1B2026" text-anchor="end">Oct 31 - Nov 3 2026</text>
+<text x="913.8" y="594" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">EEVblog #1783 and #1784;</text>
+<text x="913.8" y="608" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">C reconstruction (MIT);</text>
+<text x="913.8" y="622" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">zombu4 assembly firmware;</text>
+<text x="913.8" y="636" font-size="11" font-weight="normal" fill="#1B2026" text-anchor="end">this project</text>
+</svg>

@@ -1,0 +1,120 @@
+# .github/workflows/frontend-windows.yml
+#
+# Build 121gw-qt for Windows x64 with MSVC, run its tests, and package the
+# program with Qt (windeployqt) as a portable zip.
+#
+# Qt comes from the Qt Company's official MSVC binaries through
+# aqtinstall (pinned below), with the Qt Bluetooth module
+# (qtconnectivity). Qt Bluetooth on Windows uses the WinRT Bluetooth LE
+# API: Windows 10 or later and an adapter with Bluetooth LE; no pairing is
+# needed for the meter. The Visual Studio generator finds the compiler
+# itself, so no developer-environment step is needed.
+#
+# The program is a Windows GUI program (no console), so --help and
+# --print-mcp-command print nothing when started from a console there.
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend Windows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-windows.yml'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      nightly:
+        description: Nightly stamp YYYY.MM.DD[.N] (frontend/cmake/GW121Version.cmake); empty for a release build
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+env:
+  GW121_NIGHTLY: ${{ inputs.nightly }}
+  QT_VERSION: 6.8.3
+  AQT_VERSION: 3.2.1
+
+jobs:
+
+  windows:
+    name: 121gw-qt Windows (x64, MSVC)
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Restore Qt
+        id: qt-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: qt-${{ env.QT_VERSION }}-win64_msvc2022_64-qtconnectivity-aqt${{ env.AQT_VERSION }}
+
+      # Paths in forward-slash form (cygpath -m): CMake reads a backslash in
+      # a -D value as an escape.
+      - name: Install Qt
+        if: steps.qt-cache.outputs.cache-hit != 'true'
+        run: |
+          tmp=$(cygpath -m "$RUNNER_TEMP")
+          python -m venv "$tmp/aqt"
+          "$tmp/aqt/Scripts/pip" install "aqtinstall==$AQT_VERSION"
+          "$tmp/aqt/Scripts/aqt" install-qt windows desktop "$QT_VERSION" win64_msvc2022_64 \
+            -m qtconnectivity -O "$tmp/Qt"
+
+      - name: Save Qt
+        if: steps.qt-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: ${{ steps.qt-cache.outputs.cache-primary-key }}
+
+      - name: Configure
+        run: |
+          qt="$(cygpath -m "$RUNNER_TEMP")/Qt/$QT_VERSION/msvc2022_64"
+          echo "QT_DIR=$qt" >> "$GITHUB_ENV"
+          # The tests and the deployed program load Qt's DLLs from here.
+          echo "$qt/bin" >> "$GITHUB_PATH"
+          cmake -S . -B build -A x64 -DCMAKE_PREFIX_PATH="$qt"
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Test
+        run: QT_QPA_PLATFORM=offscreen ctest --test-dir build -C Release --output-on-failure --no-tests=error
+
+      - name: Portable zip
+        run: |
+          name="121gw-qt-$(cmake -DFIELD=file -P cmake/GW121Version.cmake)-windows-x64"
+          mkdir -p "zip/$name"
+          cp build/Release/121gw-qt.exe "zip/$name/"
+          "$QT_DIR/bin/windeployqt.exe" --release --qmldir qml --no-translations "zip/$name/121gw-qt.exe"
+          # offscreen beside windows: the check below runs headless, and so
+          # can an MCP-only session.
+          cp "$QT_DIR/plugins/platforms/qoffscreen.dll" "zip/$name/platforms/"
+          cp LICENSE "zip/$name/LICENSE.txt"
+          cp THIRD_PARTY_NOTICES.md "zip/$name/"
+          # The deployed program must still start: the demo meter, offscreen.
+          scripts/ci/smoke.sh "zip/$name/121gw-qt.exe"
+          (cd zip && 7z a -tzip "../$name.zip" "$name" >/dev/null)
+          ls -la "$name.zip"
+          echo "ZIP_NAME=$name.zip" >> "$GITHUB_ENV"
+
+      - name: Upload zip
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-windows-x64-zip
+          path: frontend/${{ env.ZIP_NAME }}
+          retention-days: 30
+          if-no-files-found: error

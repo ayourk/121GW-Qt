@@ -1,0 +1,3 @@
+# site	expected stock callee (bl)	new function	why
+0800eb8c	CalFile_Save	cal_save	BootScreen SD cal save: CAL.BIN with current-zero trims (OF-12)
+0800ebbc	CalFile_Load	cal_load	BootScreen SD cal load: 1280-B CAL.BIN, old 1200-B files still load

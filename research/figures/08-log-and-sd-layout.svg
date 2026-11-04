@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="770" viewBox="0 0 1000 770" font-family="sans-serif">
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#56616B"/></marker></defs>
+<rect x="0" y="0" width="1000" height="770" fill="#F4F6F8"/>
+<text x="16" y="32" font-size="20" font-weight="bold" fill="#1B2026">121GW SD card: log files and CAL.BIN</text>
+<text x="16" y="54" font-size="13" fill="#56616B" text-anchor="start">What stock 2.05 writes to the microSD card (FAT12/16/32, 8.3 names, root directory). Emulated card images, checked with fsck.fat.</text>
+<rect x="16" y="70" width="968" height="330" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="30" y="94" font-size="15" fill="#1B2026" text-anchor="start" font-weight="bold">Log file YYMMDDNN.CSV (long MEM starts and stops logging)</text>
+<rect x="30" y="106" width="620" height="180" rx="4" fill="#1F2428" stroke="#1F2428"/>
+<text x="42" y="128" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">START,2026/11/02,15:00:03,</text>
+<text x="42" y="146" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">ID,170800000,</text>
+<text x="42" y="164" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">INTERVAL,001,sec,</text>
+<text x="42" y="182" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">,,,MAIN,,,SUB-1,,,SUB-2,,,Remark,</text>
+<text x="42" y="200" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">No. ,Date      ,Time    ,Func. ,Value,Unit,Func. ,Value,Unit,Func. ,Value,Unit,</text>
+<text x="42" y="218" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">1,2026/11/02,15:00:04,DCV,02.0000,V,,,,,,,,</text>
+<text x="42" y="236" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">...</text>
+<text x="42" y="254" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">MAX,1,DCV,02.0000,V,</text>
+<text x="42" y="272" font-size="12" fill="#E6ECEE" text-anchor="start" font-family="monospace">MIN,1,DCV,02.0000,V,</text>
+<text x="668" y="128" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold">START</text>
+<text x="740" y="128" font-size="12" fill="#1B2026" text-anchor="start">date and time logging began (clock chip)</text>
+<text x="668" y="148" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold">ID</text>
+<text x="740" y="148" font-size="12" fill="#1B2026" text-anchor="start">YYMM stamp (0x01) + meter ID</text>
+<text x="668" y="168" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold">INTERVAL</text>
+<text x="740" y="168" font-size="12" fill="#1B2026" text-anchor="start">SETUP page 9, seconds</text>
+<text x="668" y="188" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold">rows</text>
+<text x="740" y="188" font-size="12" fill="#1B2026" text-anchor="start">No., Date, Time, then for main,</text>
+<text x="668" y="208" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold"></text>
+<text x="740" y="208" font-size="12" fill="#1B2026" text-anchor="start">sub-1, sub-2: function, value, unit</text>
+<text x="668" y="228" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold"></text>
+<text x="740" y="228" font-size="12" fill="#1B2026" text-anchor="start">(Date and Time columns since 2.04)</text>
+<text x="668" y="248" font-size="12" fill="#0F78B4" text-anchor="start" font-weight="bold">MAX/MIN</text>
+<text x="740" y="248" font-size="12" fill="#1B2026" text-anchor="start">written when logging stops</text>
+<text x="30" y="306" font-size="12" fill="#56616B" text-anchor="start">YYMMDD from the clock chip; NN = 00..99, next free index of the day (after 99 it wraps to 00 and overwrites). Lines end CRLF.</text>
+<text x="30" y="326" font-size="12" fill="#56616B" text-anchor="start">Rows go through a 60-row RAM ring, then the file is opened, appended and closed for each row: a pulled card loses at most one row.</text>
+<text x="30" y="346" font-size="12" fill="#56616B" text-anchor="start">Logging stops at 600,000 rows. After 20 failed writes a continuation file MMDDNNPP.csv (part PP) starts, without a header.</text>
+<text x="30" y="366" font-size="12" fill="#56616B" text-anchor="start">File times: modified = clock chip; created = always 2006-02-09 22:30:00 (FatFs sample get_fattime).</text>
+<rect x="16" y="420" width="968" height="300" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="30" y="442" font-size="15" fill="#1B2026" text-anchor="start" font-weight="bold">CAL.BIN (boot MEM: save / load), 1200 bytes = data EEPROM 0x000-0x4AF verbatim</text>
+<rect x="30.0" y="466" width="35.25" height="40" rx="0" fill="#E2BF55" stroke="#2A2F33"/>
+<rect x="65.25" y="466" width="810.75" height="40" rx="0" fill="#1E9AD6" stroke="#2A2F33"/>
+<text x="470.625" y="491" font-size="12" fill="#FFFFFF" text-anchor="middle" font-weight="bold">calibration records T[mode] + 16 x range</text>
+<rect x="876.0" y="466" width="35.25" height="40" rx="0" fill="#C5CCD2" stroke="#2A2F33"/>
+<rect x="911.25" y="466" width="58.75" height="40" rx="0" fill="#F4F6F8" stroke="#7A848C" stroke-dasharray="4 3"/>
+<text x="940.625" y="491" font-size="11" fill="#56616B" text-anchor="middle">trims</text>
+<text x="30" y="460" font-size="11" fill="#56616B" text-anchor="start">settings 0x000-0x02F (yellow)</text>
+<text x="970" y="460" font-size="11" fill="#56616B" text-anchor="end">0x4B0-0x4FF: not in the file</text>
+<text x="30.0" y="522" font-size="11" fill="#56616B" text-anchor="middle">0x000</text>
+<text x="65.25" y="536" font-size="11" fill="#56616B" text-anchor="middle">0x030</text>
+<text x="876.0" y="522" font-size="11" fill="#56616B" text-anchor="middle">0x480</text>
+<text x="911.25" y="536" font-size="11" fill="#56616B" text-anchor="middle">0x4B0</text>
+<text x="970.0" y="522" font-size="11" fill="#56616B" text-anchor="middle">0x500</text>
+<text x="30" y="552" font-size="12" fill="#1B2026" text-anchor="start">Settings: 0x01 date stamp (u16 YYMM), 0x03 meter ID (u32), 0x08-0x0E last function per dial position, 0x10 temperature unit,</text>
+<text x="30" y="572" font-size="12" fill="#1B2026" text-anchor="start">0x12 diode 15 V, 0x14 continuity mode, 0x16 APO (0 = on), 0x18 log interval (u16), 0x1A contrast, 0x1B VA burden display,</text>
+<text x="30" y="592" font-size="12" fill="#1B2026" text-anchor="start">0x1E buzzer, 0x1F / 0x26 board-variant markers (0xA5). Multi-byte values big-endian.</text>
+<text x="30" y="612" font-size="12" fill="#1B2026" text-anchor="start">Records: 16 bytes each, offset int32 + gain uint32 x 1,000,000 (big-endian); specials inside: 0x104 frequency constant, 0x178</text>
+<text x="30" y="632" font-size="12" fill="#1B2026" text-anchor="start">Ohm range 6 trim, 0x2D0 1 ms PEAK, 0x2E0 temperature trim.</text>
+<text x="30" y="652" font-size="12" fill="#1B2026" text-anchor="start">Outside CAL.BIN: current-zero trims 0x4D0 + 8 x slot (ACuA, DCuA, ACmA, DCmA, ACA, DCA), 0xA5 + u32 (long REL on range 0).</text>
+<text x="30" y="700" font-size="12" fill="#56616B" text-anchor="start">The file&#x27;s contents are the meter&#x27;s own calibration: keep it with the meter it came from.</text>
+<text x="16" y="750" font-size="12" fill="#56616B" text-anchor="start">Cards larger than 4 GiB: stock 2.05 wraps addresses past 4 GiB (data lands on the low sectors). Use 4 GB or smaller, or a patched build.</text>
+</svg>

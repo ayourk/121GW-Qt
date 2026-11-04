@@ -1,0 +1,93 @@
+# .github/workflows/frontend-rpm.yml
+#
+# Build the 121gw-qt RPM for Fedora (x86_64, aarch64) in containers.
+# The build dependencies are the BuildRequires of
+# frontend/packaging/rpm/121gw-qt.spec; the job builds, tests and stages
+# the install tree, then rpmbuild packages it.
+#
+# Fedora only for now; an AlmaLinux leg needs its Qt 6 Bluetooth package checked first.
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend RPM
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-rpm.yml'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+jobs:
+
+  rpm:
+    name: 121gw-qt RPM (${{ matrix.distro }}, ${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    container: ${{ matrix.container }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: fedora44
+            arch: x86_64
+            runner: ubuntu-24.04
+            container: fedora:44
+          - distro: fedora44
+            arch: aarch64
+            runner: ubuntu-24.04-arm
+            container: fedora:44
+
+    steps:
+      - name: Install git and the RPM tools
+        working-directory: /
+        run: dnf install -y git rpm-build dnf-plugins-core
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install build dependencies
+        run: dnf builddep -y packaging/rpm/121gw-qt.spec
+
+      - name: Build and test
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure --no-tests=error
+
+      - name: Build the RPM
+        run: |
+          version=$(cmake -DFIELD=full -P cmake/GW121Version.cmake)
+          [ -n "$version" ] || { echo "::error::cmake/GW121Version.cmake gave no version"; exit 1; }
+          mkdir -p rpmbuild/{SPECS,BUILD,RPMS,SRPMS}
+          DESTDIR="$PWD/rpmbuild/BUILD/rpm-root" cmake --install build
+          install -Dm644 LICENSE rpmbuild/BUILD/rpm-root/usr/share/licenses/121gw-qt/LICENSE
+          cp packaging/rpm/121gw-qt.spec rpmbuild/SPECS/
+          rpmbuild --define "_topdir $PWD/rpmbuild" --define "_builddir $PWD/rpmbuild/BUILD" \
+                   --define "gw_version $version" -bb rpmbuild/SPECS/121gw-qt.spec
+          find rpmbuild/RPMS -name '*.rpm' -exec cp {} . \;
+          ls -la ./*.rpm
+
+      - name: Install the package and start it
+        run: |
+          dnf install -y ./121gw-qt-[0-9]*.rpm
+          scripts/ci/smoke.sh 121gw-qt
+
+      - name: Upload RPM
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-${{ matrix.distro }}-${{ matrix.arch }}-rpm
+          path: frontend/*.rpm
+          retention-days: 30
+          if-no-files-found: error

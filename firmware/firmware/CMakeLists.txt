@@ -1,0 +1,134 @@
+cmake_minimum_required(VERSION 3.16)
+# Cross-compile with the GNU Arm toolchain unless another toolchain file is given.
+if(NOT CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/arm-none-eabi.cmake)
+endif()
+project(eevblog_121gw_firmware C ASM)
+
+set(ROOT_DIR   ${CMAKE_CURRENT_SOURCE_DIR}/..)
+set(COMMON_DIR ${ROOT_DIR}/common)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE MinSizeRel)
+endif()
+
+# Reconstructed application modules.
+set(APP_SOURCES
+    src/keys.c
+    src/board_io.c
+    src/hy3131_bus.c
+    src/rtc.c
+    src/lcd_driver.c
+    src/flash_ob.c
+    src/system_init.c
+    src/hy3131_tables.c
+    src/hy3131_ctrl.c
+    src/measure_rms.c
+    src/measure_scale.c
+    src/eeprom.c
+    src/calibration.c
+    src/measure_ad1.c
+    src/front_end.c
+    src/buzzer.c
+    src/display_state.c
+    src/measure_derived.c
+    src/iar_math.c
+    src/filters.c
+    src/temperature.c
+    src/range_select.c
+    src/measure_funcs.c
+    src/ac_response.c
+    src/trim_correction.c
+    src/dual_correction.c
+    src/measure_peak.c
+    src/measure_counter.c
+    src/annunciators.c
+    src/display_symbols.c
+    src/display_text.c
+    src/display_bargraph.c
+    src/display_update.c
+    src/sd_card.c
+    src/diskio.c
+    src/irq.c
+    src/settings.c
+    src/mem_records.c
+    src/ble_packet.c
+    src/ble_command.c
+    src/bt_xfer.c
+    src/msi_cal.c
+    src/power.c
+    src/setup_menu.c
+    src/modes.c
+    src/battery.c
+    src/sd_log.c
+    src/key_handlers.c
+    src/main.c
+    src/libc_min.c
+    ${COMMON_DIR}/fatfs-r016/ff.c
+    ${COMMON_DIR}/fatfs-r016/ffunicode.c
+)
+
+add_library(app_modules STATIC ${APP_SOURCES})
+target_include_directories(app_modules PUBLIC
+    include
+    ${COMMON_DIR}/cmsis/core
+    ${COMMON_DIR}/cmsis/device
+    ${COMMON_DIR}/fatfs-r016
+)
+target_compile_definitions(app_modules PUBLIC STM32L152xD)
+target_compile_options(app_modules PRIVATE -std=c11 -Wall -Wextra)
+# FatFs R0.16 w/patch 2 (common/fatfs-r016; the bootloader keeps R0.08a in
+# common/fatfs), unmodified but for ffconf.h. Its file-scope variables get
+# sections of their own: FatFs[] and Fsid stay at R0.08a's original addresses,
+# the LFN and exFAT directory buffers go to .bt_ram (see the linker scripts).
+set_source_files_properties(${COMMON_DIR}/fatfs-r016/ff.c ${COMMON_DIR}/fatfs-r016/ffunicode.c PROPERTIES
+    COMPILE_OPTIONS "-Wno-unused-parameter;-fdata-sections")
+
+# ---- Hybrid test image -----------------------------------------------------
+# Rebuilt modules + bindings of everything else to the original image, for
+# function-level equivalence tests (tools/emu/test_app_functions.py).
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hybrid_syms.s
+    COMMAND ${Python3_EXECUTABLE} -P ${ROOT_DIR}/tools/hybrid_syms.py
+            $<TARGET_FILE:app_modules> ${CMAKE_CURRENT_BINARY_DIR}/hybrid_syms.s
+    DEPENDS app_modules ${ROOT_DIR}/tools/hybrid_syms.py ${ROOT_DIR}/ghidra/app_names.tsv
+    COMMENT "Binding unresolved symbols to the original image"
+)
+add_executable(hybrid.elf ${CMAKE_CURRENT_BINARY_DIR}/hybrid_syms.s)
+target_link_options(hybrid.elf PRIVATE
+    -T${CMAKE_CURRENT_SOURCE_DIR}/hybrid.ld
+    -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/hybrid.map
+    -nostdlib -Wl,--no-gc-sections
+)
+target_link_libraries(hybrid.elf PRIVATE -Wl,--whole-archive app_modules -Wl,--no-whole-archive gcc)
+add_custom_command(TARGET hybrid.elf POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O binary hybrid.elf hybrid.bin
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# ---- Standalone application image ------------------------------------------
+# Every function rebuilt; globals at their original RAM addresses
+# (tools/hybrid_syms.py --ram-only fails if anything else is still needed).
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ram_syms.s
+    COMMAND ${Python3_EXECUTABLE} -P ${ROOT_DIR}/tools/hybrid_syms.py
+            $<TARGET_FILE:app_modules> ${CMAKE_CURRENT_BINARY_DIR}/ram_syms.s --ram-only
+    DEPENDS app_modules ${ROOT_DIR}/tools/hybrid_syms.py ${ROOT_DIR}/ghidra/app_names.tsv
+    COMMENT "Binding globals to their original RAM addresses"
+)
+add_executable(app.elf src/startup.c src/ram_init.c ${CMAKE_CURRENT_BINARY_DIR}/ram_syms.s)
+target_include_directories(app.elf PRIVATE include ${COMMON_DIR}/cmsis/core ${COMMON_DIR}/cmsis/device)
+target_compile_definitions(app.elf PRIVATE STM32L152xD)
+target_compile_options(app.elf PRIVATE $<$<COMPILE_LANGUAGE:C>:-std=c11 -Wall -Wextra>)
+target_link_options(app.elf PRIVATE
+    -T${CMAKE_CURRENT_SOURCE_DIR}/stm32l152xd_app.ld
+    -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/app.map
+    -nostdlib -Wl,--gc-sections
+)
+target_link_libraries(app.elf PRIVATE app_modules gcc)
+add_custom_command(TARGET app.elf POST_BUILD
+    COMMAND ${CMAKE_OBJCOPY} -O binary app.elf app.bin
+    COMMAND ${CMAKE_SIZE} app.elf
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)

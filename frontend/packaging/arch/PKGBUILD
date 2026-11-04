@@ -1,0 +1,35 @@
+# Maintainer: Aaron Yourk <ayourk@gmail.com>
+# SPDX-License-Identifier: MIT
+# packaging/arch/PKGBUILD: 121gw-qt for Arch Linux. Part of 121gw-qt (ayourk/121GW-Qt, frontend/).
+#
+# Used by .github/workflows/frontend-arch.yml, which copies this file to pkgbuild/ inside frontend/
+# (build() works one level up, in the source tree) and sets pkgver from cmake/GW121Version.cmake.
+# depends and makedepends are the job's list of build dependencies.
+pkgname=121gw-qt
+pkgver=0.0.0
+pkgrel=1
+pkgdesc="Front panel and MCP server for the EEVblog 121GW multimeter"
+arch=('x86_64' 'aarch64')
+url="https://github.com/ayourk/121GW-Qt"
+license=('MIT')
+depends=('qt6-base' 'qt6-declarative' 'qt6-connectivity' 'qt6-svg')
+makedepends=('cmake' 'ninja')
+optdepends=('bluez: the Bluetooth daemon the meter is reached through')
+source=()
+
+build() {
+  cd "$startdir/.."
+  cmake -B build-arch -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build-arch
+}
+
+check() {
+  cd "$startdir/.."
+  QT_QPA_PLATFORM=offscreen ctest --test-dir build-arch --output-on-failure --no-tests=error
+}
+
+package() {
+  cd "$startdir/.."
+  DESTDIR="$pkgdir" cmake --install build-arch
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

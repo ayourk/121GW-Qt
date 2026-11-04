@@ -1,0 +1,117 @@
+.\" SPDX-License-Identifier: MIT
+.\" Manual page for 121gw-qt(1). Part of 121gw-qt (ayourk/121GW-Qt, frontend/).
+.TH 121GW\-QT 1 "2026-11-03" "121gw-qt 0.1.0" "User Commands"
+.SH NAME
+121gw\-qt \- front panel, remote control and MCP server for the EEVblog 121GW multimeter
+.SH SYNOPSIS
+.B 121gw\-qt
+.RI [ options ]
+.SH DESCRIPTION
+.B 121gw\-qt
+connects to an EEVblog 121GW multimeter over Bluetooth Low Energy and shows its whole
+front panel live: the LCD, the rotary dial, the buttons and the input jacks, lighting the
+jacks the probe leads belong in for the current mode.
+Buttons pressed in the window are pressed on the meter.
+Readings can be logged and saved as sessions.
+.PP
+With the meter's custom firmware the
+.B SD card
+tab lists, downloads and uploads files on the meter's card (YMODEM over Bluetooth, about
+190 bytes per second) and uploads firmware images for the meter's bootloader.
+Overwriting a file, and every firmware upload, waits for SETUP to be pressed on the meter.
+.PP
+An MCP server on
+.B http://127.0.0.1:47121/mcp
+(this computer only, Bearer token) lets an AI assistant read the meter, press its buttons
+and suggest a dial position and jacks for a measurement.
+.PP
+Turn on the meter's Bluetooth by holding
+.B 1ms PEAK
+until
+.B BT
+shows, then press
+.B Scan.
+Without arguments the program scans for the meter used last and connects to it.
+.SH OPTIONS
+.TP
+.B \-\-demo
+Start with a simulated meter instead of Bluetooth.
+Its in\-memory SD card works at the real meter's speed.
+.TP
+.B \-\-no\-mcp
+Do not start the MCP server.
+.TP
+.BI \-\-mcp\-port " port"
+Listen for MCP on this port of 127.0.0.1 (default 47121, or the saved setting).
+.TP
+.B \-\-print\-mcp\-command
+Print the
+.B claude mcp add
+command that registers this meter's MCP server, token included, and exit.
+.TP
+.BI \-\-qml " dir"
+Load the front panel from
+.IR dir /main.qml
+instead of
+.I ~/.config/121gw\-qt/qml
+or the built\-in one.
+.TP
+.B \-\-export\-qml
+Copy the built\-in QML to
+.I ~/.config/121gw\-qt/qml
+to customize, and exit.
+Files already there are left alone.
+.TP
+.BI \-\-face\-svg " file"
+Draw the meter's face from this SVG (default
+.I ~/.config/121gw\-qt/face.svg
+if it exists).
+.TP
+.BI \-\-export\-svg " file"
+Write a starter face SVG, the artwork plus one named rectangle per element, and exit.
+.TP
+.BI \-\-screenshot " file"
+Save the window to a PNG after
+.B \-\-screenshot\-delay
+milliseconds and exit (for tests).
+.TP
+.BI \-\-screenshot\-delay " ms"
+Delay before
+.B \-\-screenshot
+(default 2500).
+.TP
+.BR \-h ", " \-\-help
+Show the options and exit.
+.TP
+.BR \-v ", " \-\-version
+Show the version and exit.
+.SH FILES
+.TP
+.I ~/.config/121gw\-qt/settings.conf
+The remembered meter, the MCP token and port (mode 600).
+.TP
+.I ~/.config/121gw\-qt/layout.json
+Front panel offsets saved by the layout editor (Ctrl+E).
+.TP
+.I ~/.config/121gw\-qt/face.svg
+Optional artwork for the meter's face.
+.TP
+.I ~/.config/121gw\-qt/qml/
+Optional customized front panel (see
+.BR \-\-export\-qml ).
+.TP
+.I ~/.local/share/121gw\-qt/sessions/
+Saved sessions,
+.IR id .csv
+and
+.IR id .json,
+the same files Readout writes.
+.SH NOTES
+Bluetooth goes through BlueZ over D\-Bus; no special group or capability is needed.
+The BlueZ daemon
+.RB ( bluetoothd )
+must be running and the adapter powered on.
+.SH SEE ALSO
+.BR bluetoothctl (1)
+.PP
+https://github.com/ayourk/121GW\-Qt

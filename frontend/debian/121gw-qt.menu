@@ -1,0 +1,6 @@
+?package(121gw-qt):needs="X11" \
+  section="Applications/Science/Electronics" \
+  title="121gw-qt" \
+  longtitle="EEVblog 121GW multimeter front panel" \
+  command="/usr/bin/121gw-qt" \
+  icon="/usr/share/pixmaps/121gw-qt.xpm"

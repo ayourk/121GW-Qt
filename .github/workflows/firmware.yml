@@ -1,0 +1,101 @@
+# .github/workflows/firmware.yml
+#
+# Build the meter's firmware (firmware/: the reconstructed SD-card
+# bootloader and the 2.05 application) with the GNU Arm toolchain, CMake
+# and Ninja, the same way it is built locally (an ubuntu:26.04 clean room
+# with gcc-arm-none-eabi), and publish the images:
+#
+#   app.bin         the application, linked at 0x08006000; copied to the
+#                   meter's SD card as EEVBLOG.BIN, it installs through the
+#                   meter's own update procedure (see firmware/README.md)
+#   bootloader.bin  the SD bootloader, linked at 0x08000000 (SWD only;
+#                   never needed for an update)
+#   *.elf, *.map    for debugging
+#
+# Also called by nightly.yml and release.yml.
+#
+# SPDX-License-Identifier: MIT
+
+name: Firmware
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firmware/**'
+      - '!firmware/**/*.md'
+      - '.github/workflows/firmware.yml'
+  pull_request:
+    paths:
+      - 'firmware/**'
+      - '.github/workflows/firmware.yml'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      label:
+        description: Name part of the uploaded files (nightly-2026.11.03, v0.1.0); empty uses the commit
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: firmware
+
+jobs:
+
+  firmware:
+    name: 121GW firmware (bootloader + app)
+    runs-on: ubuntu-24.04
+    container: ubuntu:26.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+
+    steps:
+      - name: Install the toolchain
+        working-directory: /
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates \
+            gcc-arm-none-eabi libnewlib-arm-none-eabi binutils-arm-none-eabi cmake ninja-build python3
+          arm-none-eabi-gcc --version | head -1
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build the bootloader
+        run: |
+          cmake -G Ninja -S bootloader -B build/bootloader
+          cmake --build build/bootloader
+
+      - name: Build the application
+        run: |
+          cmake -G Ninja -S firmware -B build/firmware
+          cmake --build build/firmware
+
+      - name: Collect the images
+        run: |
+          label="${{ inputs.label }}"
+          sha="${{ github.sha }}"; [ -n "$label" ] || label="g${sha:0:12}"
+          mkdir -p dist
+          for f in build/firmware/app.bin build/bootloader/bootloader.bin; do
+            [ -s "$f" ] || { echo "::error::$f was not built"; exit 1; }
+          done
+          cp build/firmware/app.bin "dist/121gw-firmware-$label-app.bin"
+          cp build/bootloader/bootloader.bin "dist/121gw-firmware-$label-bootloader.bin"
+          tar -czf "dist/121gw-firmware-$label-debug.tar.gz" \
+            -C build firmware/app.elf firmware/app.map bootloader/bootloader.elf bootloader/bootloader.map
+          (cd dist && sha256sum -- * > "121gw-firmware-$label-SHA256SUMS.txt")
+          ls -la dist
+          cat dist/*SHA256SUMS.txt
+
+      - name: Upload the images
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-firmware
+          path: firmware/dist/*
+          retention-days: 30
+          if-no-files-found: error

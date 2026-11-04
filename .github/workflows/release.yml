@@ -1,0 +1,186 @@
+# .github/workflows/release.yml
+#
+# Build every package and the firmware from one tag and draft a GitHub
+# release with them.
+#
+# Trigger: a version tag (v0.1.0) pushed, or a manual dispatch naming an
+# existing tag. The tag must equal the VERSION of project() in
+# frontend/CMakeLists.txt, which every package reads, and
+# frontend/debian/changelog's newest entry must carry that version too.
+#
+# The packaging workflows are called through workflow_call, so the recipes
+# live in their own files. The publish job gathers the artifacts, prefixes
+# the few file names that collide across legs, writes SHA256SUMS.txt and
+# creates a DRAFT release, a pre-release while the major version is 0.
+# Publishing is a manual click after checking the assets.
+#
+# SPDX-License-Identifier: MIT
+
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to release (v0.1.0)
+        type: string
+        required: true
+      draft:
+        description: Create the release as a draft
+        type: boolean
+        default: true
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+
+  # ---- the tag and the project version must agree ----------------------
+  version:
+    name: Version check
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag: ${{ steps.v.outputs.tag }}
+      prerelease: ${{ steps.v.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - id: v
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ inputs.tag || github.ref_name }}"
+          # A release has no nightly stamp, whatever this runner's environment says.
+          version=$(env -u GW121_NIGHTLY cmake -DFIELD=full -P frontend/cmake/GW121Version.cmake)
+          if [ "v$version" != "$tag" ]; then
+            echo "::error::tag $tag does not match frontend/CMakeLists.txt VERSION $version"; exit 1
+          fi
+          deb=$(head -1 frontend/debian/changelog | sed -n 's/^121gw-qt (\([^)-]*\)-[^)]*).*/\1/p')
+          if [ "$deb" != "$version" ]; then
+            echo "::error::frontend/debian/changelog's newest entry is '$deb', not $version"; exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          case "$version" in 0.*) pre=true ;; *) pre=false ;; esac
+          echo "prerelease=$pre" >> "$GITHUB_OUTPUT"
+          echo "Releasing $tag (pre-release: $pre)"
+
+  # ---- packages and firmware, one call per workflow ---------------------
+  deb:
+    needs: version
+    uses: ./.github/workflows/frontend-deb.yml
+  rpm:
+    needs: version
+    uses: ./.github/workflows/frontend-rpm.yml
+  arch:
+    needs: version
+    uses: ./.github/workflows/frontend-arch.yml
+  appimage:
+    needs: version
+    uses: ./.github/workflows/frontend-appimage.yml
+  macos:
+    needs: version
+    uses: ./.github/workflows/frontend-macos.yml
+  windows:
+    needs: version
+    uses: ./.github/workflows/frontend-windows.yml
+  firmware:
+    needs: version
+    uses: ./.github/workflows/firmware.yml
+    with:
+      label: ${{ needs.version.outputs.tag }}
+
+  # ---- gather, checksum, draft the release -----------------------------
+  publish:
+    name: Draft the release
+    needs: [version, deb, rpm, arch, appimage, macos, windows, firmware]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      TAG: ${{ needs.version.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.version.outputs.tag }}
+
+      - name: Download every artifact
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Collect the release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          find artifacts -type f \( -name '*.deb' -o -name '*.rpm' -o -name '*.pkg.tar.zst' \
+               -o -name '*.AppImage' -o -name '*.dmg' -o -name '121gw-qt-*-windows-*.zip' \
+               -o -name '121gw-firmware-*' \) \
+               -not -name '*-dbgsym*' -not -name '*.ddeb' -not -name '*-debug-*.pkg.tar.zst' \
+               -not -name '*SHA256SUMS*' > files.txt
+          # A file name that appears in more than one artifact (the Ubuntu
+          # and Debian .debs of one architecture) is prefixed with its leg:
+          # 121gw-qt-debian12-amd64-deb -> debian12-amd64.
+          while read -r f; do
+            base=$(basename "$f"); art=$(echo "$f" | cut -d/ -f2)
+            n=$(grep -c "/$base\$" files.txt || true)
+            if [ "$n" -gt 1 ]; then
+              leg=${art#121gw-qt-}; leg=${leg%-deb}; leg=${leg%-rpm}
+              cp "$f" "release/${leg}-${base}"
+            else
+              cp "$f" "release/$base"
+            fi
+          done < files.txt
+          (cd release && sha256sum -- * > SHA256SUMS.txt)
+          echo "Assets:"; ls -la release
+          missing=0
+          for kind in '*.deb' '*.rpm' '*.pkg.tar.zst' '*.AppImage' '*.dmg' '*-windows-x64.zip' '121gw-firmware-*-app.bin'; do
+            if ! ls release/$kind >/dev/null 2>&1; then
+              echo "::error::no $kind among the assets; a packaging call produced nothing"; missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ]
+
+      - name: Write the notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="https://github.com/${{ github.repository }}"
+          {
+            if [ "${{ needs.version.outputs.prerelease }}" = "true" ]; then
+              echo "This is a **preview** release for testing; expect rough edges and report them in the [issues]($repo/issues)."
+              echo
+            fi
+            echo "### Files"
+            echo
+            echo "| File | Size | SHA-256 |"
+            echo "|---|---|---|"
+            while read -r sum name; do
+              [ "$name" = "SHA256SUMS.txt" ] && continue
+              size=$(du -h "release/$name" | cut -f1)
+              echo "| [$name]($repo/releases/download/$TAG/$name) | $size | \`${sum:0:16}\` |"
+            done < release/SHA256SUMS.txt
+          } > notes.md
+          cat notes.md
+
+      - name: Create the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--title "121gw-qt $VERSION" --notes-file notes.md --generate-notes --verify-tag)
+          [ "${{ needs.version.outputs.prerelease }}" = "true" ] && args+=(--prerelease)
+          [ "${{ inputs.draft != false }}" = "true" ] && args+=(--draft)
+          gh release create "$TAG" "${args[@]}" release/*
+          echo "Release $TAG created with $(ls release | wc -l) assets."

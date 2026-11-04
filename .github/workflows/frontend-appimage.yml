@@ -1,0 +1,127 @@
+# .github/workflows/frontend-appimage.yml
+#
+# Build the 121gw-qt AppImage for x86_64 and aarch64: the program, Qt and
+# the QML modules it imports in one file that runs without installing.
+#
+# Built in an ubuntu:24.04 container with Ubuntu's Qt 6.4.2, so the
+# AppImage needs glibc 2.39 or newer (Ubuntu 24.04, Debian 13, Fedora 40
+# and later). Ubuntu 22.04's Qt (6.2) is too old to build an older floor
+# from distribution packages.
+#
+# Bluetooth needs nothing bundled: Qt Bluetooth talks to the system's
+# BlueZ daemon over D-Bus.
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend AppImage
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-appimage.yml'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      nightly:
+        description: Nightly stamp YYYY.MM.DD[.N] (frontend/cmake/GW121Version.cmake); empty for a release build
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+env:
+  GW121_NIGHTLY: ${{ inputs.nightly }}
+
+jobs:
+
+  appimage:
+    name: 121gw-qt AppImage (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    # A container has no FUSE: linuxdeploy and the AppImage extract
+    # themselves instead.
+    container: ubuntu:24.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      APPIMAGE_EXTRACT_AND_RUN: 1
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - name: Prepare the container
+        working-directory: /
+        run: |
+          apt-get update
+          apt-get install -y git sudo ca-certificates tzdata
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # --runtime: the QML modules must be installed for linuxdeploy's Qt
+      # plugin to find and bundle them.
+      - name: Install dependencies
+        run: scripts/ci/apt-deps.sh --runtime --extra qt6-base-dev-tools qt6-declarative-dev-tools file wget
+
+      - name: Build
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure --no-tests=error
+          DESTDIR="$PWD/AppDir" cmake --install build
+
+      # The continuous builds are the only ones linuxdeploy publishes.
+      - name: Download linuxdeploy and its Qt plugin
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-${{ matrix.arch }}.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-${{ matrix.arch }}.AppImage
+          chmod +x linuxdeploy-*.AppImage
+
+      - name: Create the AppImage
+        env:
+          QMAKE: /usr/bin/qmake6
+          # The QML is compiled into the program's resources; the scanner
+          # reads the sources to learn which modules to bundle.
+          QML_SOURCES_PATHS: ${{ github.workspace }}/frontend/qml
+          # offscreen as well as xcb: the program runs headless too (the
+          # check below, and an MCP-only session on a server).
+          EXTRA_PLATFORM_PLUGINS: libqoffscreen.so
+        run: |
+          # A nightly says so in the menu entry desktop integration makes.
+          if [ -n "$GW121_NIGHTLY" ]; then
+            sed -i 's/^Name=121gw-qt$/Name=121gw-qt Nightly/' AppDir/usr/share/applications/121gw-qt.desktop
+          fi
+          ./linuxdeploy-${{ matrix.arch }}.AppImage --appdir AppDir --plugin qt --output appimage \
+            --desktop-file AppDir/usr/share/applications/121gw-qt.desktop \
+            --icon-file AppDir/usr/share/icons/hicolor/scalable/apps/121gw-qt.svg
+          target="121gw-qt-$(cmake -DFIELD=file -P cmake/GW121Version.cmake)-${{ matrix.arch }}.AppImage"
+          for f in 121gw-qt*.AppImage; do
+            [ "$f" = "$target" ] || mv "$f" "$target"
+          done
+          ls -la "$target"
+          echo "APPIMAGE_NAME=$target" >> "$GITHUB_ENV"
+
+      - name: Start the AppImage (demo meter, offscreen)
+        run: scripts/ci/smoke.sh "./$APPIMAGE_NAME"
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-linux-${{ matrix.arch }}-appimage
+          path: frontend/${{ env.APPIMAGE_NAME }}
+          retention-days: 30
+          if-no-files-found: error

@@ -1,0 +1,123 @@
+# .github/workflows/frontend-macos.yml
+#
+# Build 121gw-qt for macOS as a universal (arm64 + x86_64) app bundle, run
+# its tests, and package the bundle, Qt included (macdeployqt), as a DMG.
+#
+# Qt comes from the Qt Company's official binaries through aqtinstall
+# (pinned below), with the Qt Bluetooth module (qtconnectivity). Those
+# binaries are universal, so one build serves both kinds of Mac.
+#
+# macOS differences that matter here:
+#   - CoreBluetooth hands out no device addresses, only a UUID per
+#     computer; the app uses that UUID as the meter's id there.
+#   - The bundle's Info.plist must carry NSBluetoothAlwaysUsageDescription
+#     (frontend/packaging/macos/Info.plist.in), or macOS ends the app when
+#     it first scans; the user is asked for Bluetooth permission then.
+#   - The DMG is not signed or notarized: Gatekeeper needs right-click,
+#     Open the first time (or xattr -d com.apple.quarantine).
+#
+# SPDX-License-Identifier: MIT
+
+name: Frontend macOS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '!frontend/**/*.md'
+      - '.github/workflows/frontend-macos.yml'
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      nightly:
+        description: Nightly stamp YYYY.MM.DD[.N] (frontend/cmake/GW121Version.cmake); empty for a release build
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+env:
+  GW121_NIGHTLY: ${{ inputs.nightly }}
+  QT_VERSION: 6.8.3
+  AQT_VERSION: 3.2.1
+
+jobs:
+
+  macos:
+    name: 121gw-qt macOS (universal)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # The Qt tree is several hundred MB; cached under its exact version.
+      - name: Restore Qt
+        id: qt-cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: qt-${{ env.QT_VERSION }}-mac-clang_64-qtconnectivity-aqt${{ env.AQT_VERSION }}
+
+      - name: Install Qt
+        if: steps.qt-cache.outputs.cache-hit != 'true'
+        run: |
+          python3 -m venv "$RUNNER_TEMP/aqt"
+          "$RUNNER_TEMP/aqt/bin/pip" install "aqtinstall==$AQT_VERSION"
+          "$RUNNER_TEMP/aqt/bin/aqt" install-qt mac desktop "$QT_VERSION" clang_64 \
+            -m qtconnectivity -O "$RUNNER_TEMP/Qt"
+
+      - name: Save Qt
+        if: steps.qt-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: ${{ steps.qt-cache.outputs.cache-primary-key }}
+
+      - name: Install build tools
+        run: brew install ninja
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/Qt/$QT_VERSION/macos" \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Test
+        run: QT_QPA_PLATFORM=offscreen ctest --test-dir build --output-on-failure --no-tests=error
+
+      - name: Package the DMG
+        run: |
+          app=build/121gw-qt.app
+          [ -x "$app/Contents/MacOS/121gw-qt" ] || { echo "::error::$app was not built"; exit 1; }
+          plutil -p "$app/Contents/Info.plist" | grep -q NSBluetoothAlwaysUsageDescription \
+            || { echo "::error::Info.plist lacks NSBluetoothAlwaysUsageDescription"; exit 1; }
+          lipo -info "$app/Contents/MacOS/121gw-qt"
+          "$RUNNER_TEMP/Qt/$QT_VERSION/macos/bin/macdeployqt" "$app" -qmldir=qml -always-overwrite
+          # The deployed bundle must still start (the demo meter). macdeployqt
+          # deploys only the cocoa platform plugin; the runner has a window
+          # session for it.
+          SMOKE_PLATFORM=cocoa scripts/ci/smoke.sh "$app/Contents/MacOS/121gw-qt"
+          name="121gw-qt-$(cmake -DFIELD=file -P cmake/GW121Version.cmake)-macos-universal"
+          mkdir -p dist
+          hdiutil create -volname "121gw-qt" -srcfolder "$app" -ov -format UDZO "dist/$name.dmg"
+          ls -la dist
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v7
+        with:
+          name: 121gw-qt-macos-universal-dmg
+          path: frontend/dist/*.dmg
+          retention-days: 30
+          if-no-files-found: error

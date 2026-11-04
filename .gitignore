@@ -1,0 +1,16 @@
+# Build output
+build/
+build-*/
+__pycache__/
+*.pyc
+# Device dumps and calibration images: meter-specific, never published
+dumps/
+*.cal
+CAL.BIN
+cal.bin
+# Stock EEVblog firmware images and ST's SVD are supplied by the user (see research/README.md)
+EEVBlog*.bin
+*.svd
+# Emulator output and generated SD card images
+out/
+*.img

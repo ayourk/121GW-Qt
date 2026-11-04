@@ -1,0 +1,232 @@
+# .github/workflows/nightly.yml
+#
+# Build the nightly set from main and publish it as the "nightly"
+# pre-release, replacing the previous one.
+#
+# Runs every night, and builds only when main has a commit the last
+# nightly was not built from (or when dispatched with "force"). The
+# version is the app's base plus the UTC date it was built,
+# 0.1.0.2026.11.03, with .1, .2 ... for a second or third build that date;
+# every format's spelling of it comes from frontend/cmake/GW121Version.cmake,
+# which the packaging workflows run with the stamp this workflow computes
+# once. Nightly versions sort above their base, so the release after
+# nightlies of 0.1.0 is the next version.
+#
+# What a nightly carries, the widest reach for the fewest builds:
+#   Linux     the AppImage (x86_64, aarch64) and the Ubuntu 24.04 amd64 .deb
+#   macOS     the universal DMG
+#   Windows   the portable x64 zip
+#   Firmware  app.bin (and the bootloader and debug files) from firmware/
+# Left to releases: the other .deb legs, RPM and Arch packages.
+#
+# Where it goes:
+#   - the "nightly" tag and pre-release are deleted and created again on
+#     the new commit, so https://github.com/<repo>/releases/tag/nightly
+#     always shows the newest one (releases/latest skips pre-releases);
+#   - a lightweight tag znightly-<stamp> records every nightly's commit,
+#     sorting after the v* release tags. Only the newest nightly can be
+#     downloaded; any older one can be rebuilt from its tag.
+#
+# SPDX-License-Identifier: MIT
+
+name: Nightly
+
+on:
+  schedule:
+    # 09:17 UTC is 02:17 or 03:17 in Mountain Time: off the hour, when
+    # GitHub's scheduler is busiest and delays or drops runs.
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Build even if main has not changed since the last nightly
+        type: boolean
+        default: false
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+
+  # ---- is there anything new, and what is tonight's stamp --------------
+  stamp:
+    name: Anything new?
+    if: github.repository == 'ayourk/121GW-Qt'
+    runs-on: ubuntu-24.04
+    outputs:
+      build: ${{ steps.s.outputs.build }}
+      stamp: ${{ steps.s.outputs.stamp }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Every tag: the last nightly's commit and the znightly-* names.
+          fetch-depth: 0
+
+      - id: s
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha=$(git rev-parse HEAD)
+          last=$(git rev-parse -q --verify 'refs/tags/nightly^{commit}' || true)
+          if [ "$sha" = "$last" ] && [ "${{ inputs.force }}" != "true" ]; then
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::the nightly is already built from $sha; nothing to do"
+            exit 0
+          fi
+          # Taken once, here, so no package can disagree about the date.
+          day=$(date -u +%Y.%m.%d)
+          stamp=$day; n=0
+          while git rev-parse -q --verify "refs/tags/znightly-$stamp" >/dev/null; do
+            n=$((n + 1)); stamp="$day.$n"
+          done
+          # The module refuses a malformed stamp; better here than in five jobs.
+          full=$(GW121_NIGHTLY="$stamp" cmake -DFIELD=full -P frontend/cmake/GW121Version.cmake)
+          echo "stamp=$stamp" >> "$GITHUB_OUTPUT"
+          echo "build=true" >> "$GITHUB_OUTPUT"
+          echo "::notice::nightly $stamp ($full) from $sha"
+
+  # ---- the nightly set, through the packaging workflows ----------------
+  deb:
+    needs: stamp
+    if: needs.stamp.outputs.build == 'true'
+    uses: ./.github/workflows/frontend-deb.yml
+    with:
+      nightly: ${{ needs.stamp.outputs.stamp }}
+      legs: ubuntu2404-amd64
+  appimage:
+    needs: stamp
+    if: needs.stamp.outputs.build == 'true'
+    uses: ./.github/workflows/frontend-appimage.yml
+    with:
+      nightly: ${{ needs.stamp.outputs.stamp }}
+  macos:
+    needs: stamp
+    if: needs.stamp.outputs.build == 'true'
+    uses: ./.github/workflows/frontend-macos.yml
+    with:
+      nightly: ${{ needs.stamp.outputs.stamp }}
+  windows:
+    needs: stamp
+    if: needs.stamp.outputs.build == 'true'
+    uses: ./.github/workflows/frontend-windows.yml
+    with:
+      nightly: ${{ needs.stamp.outputs.stamp }}
+  firmware:
+    needs: stamp
+    if: needs.stamp.outputs.build == 'true'
+    uses: ./.github/workflows/firmware.yml
+    with:
+      label: nightly-${{ needs.stamp.outputs.stamp }}
+
+  # ---- gather, tag, replace the nightly pre-release ---------------------
+  publish:
+    name: Publish the nightly
+    needs: [stamp, deb, appimage, macos, windows, firmware]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      STAMP: ${{ needs.stamp.outputs.stamp }}
+      SHA: ${{ github.sha }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download every artifact
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Collect the nightly assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          # Packages, the portable zip and the firmware; no screenshots and
+          # no debug symbol packages.
+          find artifacts -type f \( -name '*.deb' -o -name '*.AppImage' -o -name '*.dmg' \
+               -o -name '121gw-qt-*-windows-*.zip' -o -name '121gw-firmware-*' \) \
+               -not -name '*-dbgsym*' -not -name '*.ddeb' -not -name '*SHA256SUMS*' \
+               -exec cp {} release/ \;
+          (cd release && sha256sum -- * > SHA256SUMS.txt)
+          echo "Assets:"; ls -la release
+          # Every kind the nightly promises, or nothing is published.
+          missing=0
+          for kind in '*.deb' '*.AppImage' '*.dmg' '*-windows-x64.zip' '121gw-firmware-*-app.bin'; do
+            if ! ls release/$kind >/dev/null 2>&1; then
+              echo "::error::no $kind among the assets; a packaging call produced nothing"; missing=1
+            fi
+          done
+          [ "$missing" -eq 0 ]
+
+      - name: Write the notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          full=$(GW121_NIGHTLY="$STAMP" cmake -DFIELD=full -P frontend/cmake/GW121Version.cmake)
+          base=$(GW121_NIGHTLY="$STAMP" cmake -DFIELD=base -P frontend/cmake/GW121Version.cmake)
+          prev=$(git rev-parse -q --verify 'refs/tags/nightly^{commit}' || true)
+          repo="https://github.com/${{ github.repository }}"
+          {
+            echo "**121gw-qt Nightly $STAMP**, version $full, and the meter firmware, built from [\`${SHA:0:12}\`]($repo/commit/$SHA)."
+            echo
+            echo "> A nightly is built automatically from the newest code and is not tested the way a release is. Expect rough edges, and please report what you find in the [issues]($repo/issues)."
+            echo
+            if [ -n "$prev" ] && [ "$prev" != "$SHA" ]; then
+              echo "### Changes since the previous nightly"
+              echo
+              git log --format='- %s ([`%h`]('"$repo"'/commit/%H))' "$prev..$SHA" | head -50
+              echo
+              echo "[Full comparison]($repo/compare/$prev...$SHA)"
+              echo
+            fi
+            echo "### Installing"
+            echo
+            echo "- **Linux:** make the AppImage executable (\`chmod +x\`) and run it (glibc 2.39 or newer: Ubuntu 24.04, Debian 13, Fedora 40 and later); on Ubuntu 24.04, \`sudo apt install ./<file>.deb\`."
+            echo "- **macOS:** open the DMG and drag **121gw-qt** to Applications. It is not notarized, so the first time, right-click it and choose **Open** (or run \`xattr -d com.apple.quarantine /Applications/121gw-qt.app\`). macOS asks for Bluetooth permission at the first scan."
+            echo "- **Windows:** unzip and run \`121gw-qt.exe\` (Windows 10 or later, Bluetooth LE). It is not code-signed, so SmartScreen may say it protected your PC: choose **More info**, then **Run anyway**. If Windows reports a missing VCRUNTIME140 DLL, install Microsoft's Visual C++ Redistributable (x64)."
+            echo "- **Firmware:** \`121gw-firmware-*-app.bin\` is the meter's application. Copy it to the root of the meter's SD card as \`EEVBLOG.BIN\` and follow the update procedure in the meter's manual, or upload it from the app's SD card tab (**Update firmware...**), which needs the custom firmware already on the meter. Keep the meter's \`CAL.BIN\` backup."
+            echo
+            echo "### Files"
+            echo
+            echo "| File | Size | SHA-256 |"
+            echo "|---|---|---|"
+            while read -r sum name; do
+              [ "$name" = "SHA256SUMS.txt" ] && continue
+              size=$(du -h "release/$name" | cut -f1)
+              echo "| [$name]($repo/releases/download/nightly/$name) | $size | \`${sum:0:16}\` |"
+            done < release/SHA256SUMS.txt
+            echo
+            echo "Nightly versions sort above their base ($base), so the next release is a newer version than every nightly before it."
+          } > notes.md
+          cat notes.md
+
+      # The history tag first: it records this nightly's commit even if the
+      # release step below fails, and the next run's stamp counts it.
+      - name: Tag the commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/${{ github.repository }}/git/refs" \
+            -f ref="refs/tags/znightly-$STAMP" -f sha="$SHA" >/dev/null
+          echo "znightly-$STAMP -> $SHA"
+
+      # Replaced rather than edited, so the "nightly" tag moves to the new
+      # commit and the release's date is the build's.
+      - name: Replace the nightly pre-release
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view nightly >/dev/null 2>&1; then
+            gh release delete nightly --cleanup-tag --yes
+          fi
+          git push --delete origin nightly 2>/dev/null || true
+          gh release create nightly --target "$SHA" --prerelease \
+            --title "121gw-qt Nightly $STAMP" --notes-file notes.md release/*
+          echo "nightly -> $SHA with $(ls release | wc -l) assets"

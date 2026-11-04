@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="780" viewBox="0 0 1000 780" font-family="sans-serif">
+<defs><marker id="ah" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#56616B"/></marker></defs>
+<rect x="0" y="0" width="1000" height="780" fill="#F4F6F8"/>
+<text x="16" y="32" font-size="20" font-weight="bold" fill="#1B2026">121GW firmware update and calibration backup</text>
+<text x="16" y="54" font-size="13" fill="#56616B" text-anchor="start">Firmware update (left) and calibration backup / restore through CAL.BIN (right). Boxes show the main display.</text>
+<rect x="30" y="74" width="430" height="70" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="42" y="94" font-size="13" fill="#1B2026" text-anchor="start">Card: FAT12/16/32, file EEVBlog.bin in the root</text>
+<text x="42" y="111" font-size="13" fill="#1B2026" text-anchor="start">(any case, 8.3 name; plain image, no header or</text>
+<text x="42" y="128" font-size="13" fill="#1B2026" text-anchor="start">checksum). Battery not low. Meter off.</text>
+<line x1="245.0" y1="144" x2="245.0" y2="168" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="30" y="168" width="430" height="52" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="42" y="188" font-size="13" fill="#1B2026" text-anchor="start">Hold only these two,</text>
+<text x="42" y="205" font-size="13" fill="#1B2026" text-anchor="start">then switch on</text>
+<rect x="280" y="180" width="52" height="24" rx="12" fill="#4A5560" stroke="#2A2F33"/>
+<text x="306.0" y="197" font-size="12" fill="#F0F4F6" text-anchor="middle" font-weight="bold">MEM</text>
+<text x="336" y="197" font-size="15" fill="#1B2026" text-anchor="start" font-weight="bold">+</text>
+<rect x="350" y="180" width="54" height="24" rx="12" fill="#4A5560" stroke="#2A2F33"/>
+<text x="377.0" y="197" font-size="12" fill="#F0F4F6" text-anchor="middle" font-weight="bold">HOLD</text>
+<line x1="245.0" y1="220" x2="245.0" y2="244" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="170" y="244" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="312" y="259" font-size="12" fill="#1B1D1B" text-anchor="end" font-weight="bold" font-family="monospace">-IAP-</text>
+<text x="245.0" y="283" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">-IAP-</text>
+<line x1="245.0" y1="290" x2="245.0" y2="316" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="251.0" y="307.0" font-size="11" fill="#56616B" text-anchor="start">SETUP within ~8 s</text>
+<line x1="170" y1="280" x2="100" y2="296" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="20" y="296" width="120" height="56" rx="8" fill="#EEF1F4" stroke="#C5CCD2"/>
+<text x="32" y="316" font-size="13" fill="#1B2026" text-anchor="start">timeout:</text>
+<text x="32" y="333" font-size="13" fill="#1B2026" text-anchor="start">normal boot</text>
+<rect x="170" y="316" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="245.0" y="355" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">douun</text>
+<line x1="245.0" y1="362" x2="245.0" y2="386" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="30" y="386" width="430" height="70" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="42" y="406" font-size="13" fill="#1B2026" text-anchor="start">Erase the application area, program the file</text>
+<text x="42" y="423" font-size="13" fill="#1B2026" text-anchor="start">in 128-byte half pages, verify each;</text>
+<text x="42" y="440" font-size="13" fill="#1B2026" text-anchor="start">bargraph shows progress (25 steps)</text>
+<line x1="245.0" y1="456" x2="245.0" y2="480" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="80" y="480" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="155.0" y="519" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace"> Good</text>
+<rect x="260" y="480" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="335.0" y="519" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace"> FAIL</text>
+<line x1="245.0" y1="526" x2="245.0" y2="552" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="30" y="552" width="430" height="52" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="42" y="572" font-size="13" fill="#1B2026" text-anchor="start">Starts the new firmware at once (do not switch off)</text>
+<rect x="30" y="620" width="430" height="110" rx="8" fill="#FFF6E0" stroke="#E2BF55"/>
+<text x="42" y="640" font-size="13" fill="#1B2026" text-anchor="start">No card or no file: waits for SETUP again,</text>
+<text x="42" y="657" font-size="13" fill="#1B2026" text-anchor="start">with no timeout. Calibration and settings in</text>
+<text x="42" y="674" font-size="13" fill="#1B2026" text-anchor="start">EEPROM are not touched by an update.</text>
+<text x="42" y="691" font-size="13" fill="#1B2026" text-anchor="start">Largest file 360 KB; a size that is not a</text>
+<text x="42" y="708" font-size="13" fill="#1B2026" text-anchor="start">multiple of 4 loses its last 1-3 bytes.</text>
+<rect x="520" y="74" width="450" height="52" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="532" y="94" font-size="13" fill="#1B2026" text-anchor="start">Card in the meter (FAT, 4 GB or smaller for stock 2.05).</text>
+<text x="532" y="111" font-size="13" fill="#1B2026" text-anchor="start">Meter off.</text>
+<line x1="745.0" y1="126" x2="745.0" y2="150" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="520" y="150" width="450" height="44" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="532" y="170" font-size="13" fill="#1B2026" text-anchor="start">Hold MEM, switch on (release within 0.5 s)</text>
+<line x1="745.0" y1="194" x2="745.0" y2="216" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="670" y="216" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="745.0" y="255" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">SD.CAL</text>
+<line x1="670" y1="250" x2="590" y2="290" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="636.0" y="274.0" font-size="11" fill="#56616B" text-anchor="start">REL (UP)</text>
+<line x1="820" y1="250" x2="900" y2="290" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="866.0" y="274.0" font-size="11" fill="#56616B" text-anchor="start">PEAK (DOWN)</text>
+<rect x="520" y="290" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="595.0" y="329" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">SD.SAv</text>
+<rect x="820" y="290" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="895.0" y="329" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">SD.SET</text>
+<text x="520" y="356" font-size="12" fill="#56616B" text-anchor="start">save: EEPROM -&gt; CAL.BIN</text>
+<text x="820" y="356" font-size="12" fill="#56616B" text-anchor="start">load: CAL.BIN -&gt; EEPROM</text>
+<line x1="595" y1="362" x2="720" y2="400" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="663.5" y="385.0" font-size="11" fill="#56616B" text-anchor="start">MODE</text>
+<line x1="895" y1="362" x2="770" y2="400" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<text x="838.5" y="385.0" font-size="11" fill="#56616B" text-anchor="start">MODE</text>
+<rect x="570" y="400" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="645.0" y="439" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">SAvEd</text>
+<rect x="770" y="400" width="150" height="46" rx="4" fill="#6B7262" stroke="#49504F"/>
+<text x="845.0" y="439" font-size="20" fill="#1B1D1B" text-anchor="middle" font-weight="bold" font-family="monospace">-Err-</text>
+<text x="745" y="470" font-size="12" fill="#56616B" text-anchor="middle">Each step waits 5 s for its key; no key: normal start.</text>
+<line x1="745.0" y1="478" x2="745.0" y2="500" stroke="#56616B" stroke-width="1.6" marker-end="url(#ah)"/>
+<rect x="520" y="500" width="450" height="50" rx="8" fill="#FFFFFF" stroke="#C5CCD2"/>
+<text x="532" y="520" font-size="13" fill="#1B2026" text-anchor="start">Result stays on screen: switch the meter off and on.</text>
+<rect x="520" y="566" width="450" height="164" rx="8" fill="#FFF6E0" stroke="#E2BF55"/>
+<text x="532" y="586" font-size="13" fill="#1B2026" text-anchor="start">CAL.BIN = data EEPROM 0x000-0x4AF, 1200 bytes:</text>
+<text x="532" y="603" font-size="13" fill="#1B2026" text-anchor="start">settings, board-variant markers 0x1F/0x26 and every</text>
+<text x="532" y="620" font-size="13" fill="#1B2026" text-anchor="start">calibration record. Load writes all 1200 bytes and</text>
+<text x="532" y="637" font-size="13" fill="#1B2026" text-anchor="start">reads them back (&quot;-Err-&quot; on a short read or mismatch).</text>
+<text x="532" y="654" font-size="13" fill="#1B2026" text-anchor="start">A successful load also shows &quot;SAvEd&quot;.</text>
+<text x="532" y="671" font-size="13" fill="#1B2026" text-anchor="start">Not included: the current-zero trims (0x4D0-0x4FF).</text>
+<text x="532" y="688" font-size="13" fill="#1B2026" text-anchor="start">A CAL.BIN from another meter brings its settings,</text>
+<text x="532" y="705" font-size="13" fill="#1B2026" text-anchor="start">markers and calibration.</text>
+<text x="16" y="760" font-size="12" fill="#56616B" text-anchor="start">Sources: EEVblog&#x27;s bootloader reconstruction (left); decompile and emulator runs of stock 2.05 (right); both procedures used on a production meter.</text>
+</svg>
